@@ -94,14 +94,16 @@ Node *term() {
     if (consume('(')) {
         Node *node = add();
         if (!consume(')'))
-            error("No closing parenthesis: %s", tokens[pos].input);
+            fprintf(stderr, "No closing parenthesis: %s", tokens[pos].input);
+            exit(1);
         return node;
     }
 
     if (tokens[pos].ty == TK_NUM)
         return new_node_num(tokens[pos++].val);
     
-    error("Token is neither an integer or parenthesis: %s", tokens[pos].input);
+    fprintf(stderr, "Token is neither an integer or parenthesis: %s", tokens[pos].input);
+    exit(1);
 }
 
 void gen(Node *node) {
