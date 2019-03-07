@@ -3,8 +3,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-int pos = 0;
-
 enum {
     TK_NUM = 256, // integer token
     TK_EOF, // token representing end of input
@@ -20,16 +18,29 @@ typedef struct {
     char *input; // token str (for error message)
 } Token;
 
-// Tokenized tokens will be stored here
-// Expect only up to 100 tokens
-Token tokens[100];
-
 typedef struct Node {
     int ty; // operator or ND_NUM
     struct Node *lhs;
     struct Node *rhs;
     int val;
 } Node;
+
+// Function prototypes
+Node *new_node(int ty, Node *lhs, Node *rhs);
+Node *new_node_num(int val);
+int consume(int ty);
+Node *add();
+Node *mul();
+Node *term();
+void gen(Node *node);
+void tokenize(char *p);
+void error(int i);
+
+// Tokenized tokens will be stored here
+// Expect only up to 100 tokens
+Token tokens[100];
+
+int pos = 0;
 
 Node *new_node(int ty, Node *lhs, Node *rhs) {
     Node *node = malloc(sizeof(Node));
