@@ -1,0 +1,17 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: gcc:latest
+    
+    steps:
+      - checkout
+      - run: make
+      - run: chmod +x test.sh
+      - run: ./test.sh
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build
