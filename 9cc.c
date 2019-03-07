@@ -3,9 +3,15 @@
 #include <stdlib.h>
 #include <string.h>
 
+int pos = 0;
+
 enum {
     TK_NUM = 256, // integer token
     TK_EOF, // token representing end of input
+};
+
+enum {
+    ND_NUM = 256, // integer node type
 };
 
 typedef struct {
@@ -17,6 +23,106 @@ typedef struct {
 // Tokenized tokens will be stored here
 // Expect only up to 100 tokens
 Token tokens[100];
+
+typedef struct Node {
+    int ty; // operator or ND_NUM
+    struct Node *lhs;
+    struct Node *rhs;
+    int val;
+} Node;
+
+Node *new_node(int ty, Node *lhs, Node *rhs) {
+    Node *node = malloc(sizeof(Node));
+    node->ty = ty;
+    node->lhs = lhs;
+    node->rhs = rhs;
+    return node;
+}
+
+Node *new_node_num(int val) {
+    Node *node = malloc(sizeof(Node));
+    node->ty = ND_NUM;
+    node->val = val;
+    return node;
+}
+
+int consume(int ty) {
+    if (tokens[pos].ty != ty)
+        return 0;
+    pos++;
+    return 1;
+}
+
+Node *add() {
+    Node *node = mul();
+
+    for (;;) {
+        if(consume('+'))
+            node = new_node('+', node, mul());
+        else if (consume('-'))
+            node = new_node('-', node, mul());
+        else
+            return node;
+    }
+}
+
+Node *mul() {
+    Node *node = term();
+
+    for (;;) {
+        if (consume('*'))
+            node = new_node('*', node, term());
+        else if (consume('/'))
+            node = new_node('/', node, term());
+        else
+            return node;
+    }
+}
+
+Node *term() {
+    if (consume('(')) {
+        Node *node = add();
+        if (!consume(')'))
+            error("No closing parenthesis: %s", tokens[pos].input);
+        return node;
+    }
+
+    if (tokens[pos].ty == TK_NUM)
+        return new_node_num(tokens[pos++].val);
+    
+    error("Token is neither an integer or parenthesis: %s", tokens[pos].input);
+}
+
+void gen(Node *node) {
+    if (node->ty == ND_NUM) {
+        printf("  push %d\n", node->val);
+        return;
+    }
+
+    gen(node->lhs);
+    gen(node->rhs);
+
+    printf("  pop rdi\n");
+    printf("  pop rax\n");
+
+    switch (node->ty) {
+    case '+':
+        printf("  add rax, rdi\n");
+        break;
+    case '-':
+        printf("  sub rax, rdi\n");
+        break;
+    case '*':
+        printf("  mul rdi\n");
+        break;
+    case '/':
+        printf("  mov rdx, 0\n");
+        printf("  div rdi\n");
+    }
+    
+    printf("  push rax\n");
+}
+
 
 // Tokenize the string pointed by p and store in tokens
 void tokenize(char *p) {
@@ -65,43 +171,21 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    // Tokenize input
+    // Tokenize input and parse 
     tokenize(argv[1]);
+    Node *node = add();
 
     // Output the first part of assembly
     printf(".intel_syntax noprefix\n");
     printf(".global main\n");
     printf("main:\n");
 
-    // Check that the first input is number
-    // and execute the first mov instruction
-    if (tokens[0].ty != TK_NUM)
-        error(0);
-    printf("  mov rax, %d\n", tokens[0].val);
+    // Descend the tree and generate code
+    gen(node);
 
-    int i = 1;
-    while (tokens[i].ty != TK_EOF) {
-        if (tokens[i].ty == '+') {
-            i++;
-            if (tokens[i].ty != TK_NUM)
-                error(i);
-            printf("  add rax, %d\n", tokens[i].val);
-            i++;
-            continue;
-        }
-
-        if (tokens[i].ty == '-') {
-            i++;
-            if (tokens[i].ty != TK_NUM)
-                error(i);
-            printf("  sub rax, %d\n", tokens[i].val);
-            i++;
-            continue;
-        }
-
-        error(i);
-    }
-
+    // Fetch the last value on the stack
+    // and load it to rax
+    printf("  pop rax\n");
     printf("  ret\n");
     return 0;
 }
