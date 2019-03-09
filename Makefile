@@ -1,4 +1,8 @@
+CC=gcc
+
+
 9cc: 9cc.c
+	$(CC) 9cc.c -o 9cc -ggdb
 
 test: 9cc
 	./test.sh
