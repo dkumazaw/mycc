@@ -93,9 +93,10 @@ Node *mul() {
 Node *term() {
     if (consume('(')) {
         Node *node = add();
-        if (!consume(')'))
+        if (!consume(')')) {
             fprintf(stderr, "No closing parenthesis: %s", tokens[pos].input);
             exit(1);
+        }
         return node;
     }
 
