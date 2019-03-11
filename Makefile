@@ -5,7 +5,7 @@ CC=gcc
 	$(CC) 9cc.c -o 9cc -ggdb
 
 test: 9cc
-	./gcc -test
+	./9cc -test
 	./test.sh
 
 clean:
