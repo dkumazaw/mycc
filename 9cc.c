@@ -1,33 +1,10 @@
-#include <ctype.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-enum {
-    TK_NUM = 256, // integer token
-    TK_EOF, // token representing end of input
-};
-
-enum {
-    ND_NUM = 256, // integer node type
-};
-
-typedef struct {
-    int ty; // type of token
-    int val; // if ty is TK_NUM, store its value
-    char *input; // token str (for error message)
-} Token;
-
-typedef struct Node {
-    int ty; // operator or ND_NUM
-    struct Node *lhs;
-    struct Node *rhs;
-    int val;
-} Node;
+#include "9cc.h"
 
 // Function prototypes
 Node *new_node(int ty, Node *lhs, Node *rhs);
 Node *new_node_num(int val);
+Vector *new_vector();
+void vec_push(Vector *vec, void *elem);
 int consume(int ty);
 Node *add();
 Node *mul();
@@ -55,6 +32,22 @@ Node *new_node_num(int val) {
     node->ty = ND_NUM;
     node->val = val;
     return node;
+}
+
+Vector *new_vector() {
+    Vector *vec = malloc(sizeof(Vector));
+    vec->data = malloc(sizeof(void *) * 16);
+    vec->capacity = 16;
+    vec->len = 0;
+    return vec;
+}
+
+void vec_push(Vector *vec, void *elem) {
+    if (vec->capacity == vec->len) {
+        vec->capacity *= 2;
+        vec->data = realloc(vec->data, sizeof(void *) * vec->capacity);
+    }
+    vec->data[vec->len++] = elem;
 }
 
 int consume(int ty) {
