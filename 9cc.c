@@ -200,6 +200,11 @@ int main(int argc, char **argv) {
         return 1;
     }
 
+    if (strcmp(argv[1], "-test") == 0) {
+        runtest();
+        return 0;
+    }
+
     // Tokenize input and parse 
     tokenize(argv[1]);
     Node *node = add();
