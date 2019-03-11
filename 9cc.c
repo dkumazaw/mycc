@@ -184,7 +184,7 @@ void runtest() {
     expect(__LINE__, 50, (int)vec->data[50]);
     expect(__LINE__, 99, (int)vec->data[99]);
 
-    printf("OK\n")
+    printf("OK\n");
 }
 
 // Reports error
