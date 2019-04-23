@@ -34,6 +34,7 @@ Node *new_node_num(int val) {
     return node;
 }
 
+// Creates a new vector
 Vector *new_vector() {
     Vector *vec = malloc(sizeof(Vector));
     vec->data = malloc(sizeof(void *) * 16);
@@ -42,6 +43,7 @@ Vector *new_vector() {
     return vec;
 }
 
+// Pushes an element to the vector
 void vec_push(Vector *vec, void *elem) {
     if (vec->capacity == vec->len) {
         vec->capacity *= 2;
