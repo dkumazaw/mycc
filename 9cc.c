@@ -15,6 +15,8 @@ void error(int i);
 
 // Tokenized tokens will be stored here
 // Expect only up to 100 tokens
+
+Vector token_vector = new_vector();
 Token tokens[100];
 
 int pos = 0;
