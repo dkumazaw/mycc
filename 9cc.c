@@ -104,6 +104,7 @@ Node *term() {
     exit(1);
 }
 
+// Generates assembler code
 void gen(Node *node) {
     if (node->ty == ND_NUM) {
         printf("  push %d\n", node->val);
