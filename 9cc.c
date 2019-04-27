@@ -5,21 +5,18 @@ Node *new_node(int ty, Node *lhs, Node *rhs);
 Node *new_node_num(int val);
 Vector *new_vector();
 void vec_push(Vector *vec, void *elem);
-int consume(int ty);
+int consume(Vector *tokens, int ty);
 Node *add();
 Node *mul();
 Node *term();
 void gen(Node *node);
-void tokenize(char *p);
-void error(int i);
+void tokenize(char *p, Vector *tokens);
+//void error(int i);
 
-// Tokenized tokens will be stored here
-// Expect only up to 100 tokens
-Token tokens[100];
+int pos = 0; // Stores current position when parsing tokens
 
-int pos = 0;
-
-Node *new_node(int ty, Node *lhs, Node *rhs) {
+Node *new_node(int ty, Node *lhs, Node *rhs)
+{
     Node *node = malloc(sizeof(Node));
     node->ty = ty;
     node->lhs = lhs;
@@ -27,14 +24,32 @@ Node *new_node(int ty, Node *lhs, Node *rhs) {
     return node;
 }
 
-Node *new_node_num(int val) {
+Node *new_node_num(int val)
+{
     Node *node = malloc(sizeof(Node));
     node->ty = ND_NUM;
     node->val = val;
     return node;
 }
 
-Vector *new_vector() {
+/*
+Token *new_token
+
+Creates a new token
+*/
+Token *new_token()
+{
+    Token *token = malloc(sizeof(Token));
+    return token;
+}
+
+/*
+Vector *new_vector
+
+Creates a new vector and initializes its capacity to 16.
+*/
+Vector *new_vector()
+{
     Vector *vec = malloc(sizeof(Vector));
     vec->data = malloc(sizeof(void *) * 16);
     vec->capacity = 16;
@@ -42,66 +57,104 @@ Vector *new_vector() {
     return vec;
 }
 
-void vec_push(Vector *vec, void *elem) {
-    if (vec->capacity == vec->len) {
+/*
+Vector *new_vector
+
+Pushes a new element to vec.
+*/
+void vec_push(Vector *vec, void *elem)
+{
+    if (vec->capacity == vec->len)
+    {
         vec->capacity *= 2;
         vec->data = realloc(vec->data, sizeof(void *) * vec->capacity);
     }
     vec->data[vec->len++] = elem;
 }
 
-int consume(int ty) {
-    if (tokens[pos].ty != ty)
+/*
+consume
+
+Checks if the current position of the vector is of type ty
+*/
+int consume(Vector *tokens, int ty)
+{
+    if (((Token *)tokens->data[pos])->ty != ty)
         return 0;
     pos++;
     return 1;
 }
 
-Node *add() {
-    Node *node = mul();
+/*
+add
 
-    for (;;) {
-        if(consume('+'))
-            node = new_node('+', node, mul());
-        else if (consume('-'))
-            node = new_node('-', node, mul());
+Parser for + and - operations
+*/
+Node *add(Vector *tokens)
+{
+    Node *node = mul(tokens);
+
+    for (;;)
+    {
+        if (consume(tokens, '+'))
+            node = new_node('+', node, mul(tokens));
+        else if (consume(tokens, '-'))
+            node = new_node('-', node, mul(tokens));
         else
             return node;
     }
 }
 
-Node *mul() {
-    Node *node = term();
+/*
+mul
 
-    for (;;) {
-        if (consume('*'))
-            node = new_node('*', node, term());
-        else if (consume('/'))
-            node = new_node('/', node, term());
+Parser for * and / operations
+*/
+Node *mul(Vector *tokens)
+{
+    Node *node = term(tokens);
+
+    for (;;)
+    {
+        if (consume(tokens, '*'))
+            node = new_node('*', node, term(tokens));
+        else if (consume(tokens, '/'))
+            node = new_node('/', node, term(tokens));
         else
             return node;
     }
 }
 
-Node *term() {
-    if (consume('(')) {
-        Node *node = add();
-        if (!consume(')')) {
-            fprintf(stderr, "No closing parenthesis: %s", tokens[pos].input);
+/*
+term
+
+Parser for a terminal expression
+*/
+Node *term(Vector *tokens)
+{
+    if (consume(tokens, '('))
+    {
+        Node *node = add(tokens);
+        if (!consume(tokens, ')'))
+        {
+            fprintf(stderr, "No closing parenthesis: %s", ((Token *)tokens->data[pos])->input);
             exit(1);
         }
         return node;
     }
 
-    if (tokens[pos].ty == TK_NUM)
-        return new_node_num(tokens[pos++].val);
-    
-    fprintf(stderr, "Token is neither an integer or parenthesis: %s", tokens[pos].input);
+    if (((Token *)tokens->data[pos])->ty == TK_NUM)
+        return new_node_num(((Token *)tokens->data[pos++])->val);
+
+    fprintf(stderr, "Token is neither an integer or parenthesis: %s", ((Token *)tokens->data[pos])->input);
     exit(1);
 }
 
-void gen(Node *node) {
-    if (node->ty == ND_NUM) {
+// Generates assembler code
+void gen(Node *node)
+{
+    if (node->ty == ND_NUM)
+    {
         printf("  push %d\n", node->val);
         return;
     }
@@ -112,7 +165,8 @@ void gen(Node *node) {
     printf("  pop rdi\n");
     printf("  pop rax\n");
 
-    switch (node->ty) {
+    switch (node->ty)
+    {
     case '+':
         printf("  add rax, rdi\n");
         break;
@@ -126,34 +180,43 @@ void gen(Node *node) {
         printf("  mov rdx, 0\n");
         printf("  div rdi\n");
     }
-    
+
     printf("  push rax\n");
 }
 
+/*
+tokenize 
 
-// Tokenize the string pointed by p and store in tokens
-void tokenize(char *p) {
-    int i = 0;
-    while (*p) {
+Tokenizes the given string and stores the tokens in a vector
+*/
+void tokenize(char *p, Vector *tokens)
+{
+    while (*p)
+    {
         // Skip whitespace
-        if (isspace(*p)) {
+        if (isspace(*p))
+        {
             p++;
             continue;
         }
 
-        if (*p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p == ')') {
-            tokens[i].ty = *p;
-            tokens[i].input = p;
-            i++;
+        if (*p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p == ')')
+        {
+            Token *token = new_token();
+            token->ty = *p;
+            token->input = p;
+            vec_push(tokens, (void *)token);
             p++;
             continue;
         }
 
-        if (isdigit(*p)) {
-            tokens[i].ty = TK_NUM;
-            tokens[i].input = p;
-            tokens[i].val = strtol(p, &p, 10);
-            i++;
+        if (isdigit(*p))
+        {
+            Token *token = new_token();
+            token->ty = TK_NUM;
+            token->input = p;
+            token->val = strtol(p, &p, 10);
+            vec_push(tokens, (void *)token);
             continue;
         }
 
@@ -161,24 +224,28 @@ void tokenize(char *p) {
         exit(1);
     }
 
-    tokens[i].ty = TK_EOF;
-    tokens[i].input = p;
+    Token *token = new_token();
+    token->ty = TK_EOF;
+    token->input = p;
+    vec_push(tokens, (void *)token);
 }
 
-int expect(int line, int expected, int actual) {
+int expect(int line, int expected, int actual)
+{
     if (expected == actual)
         return 0;
     fprintf(stderr, "%d: %d expected, but got %d\n", line, expected, actual);
     exit(1);
 }
 
-void runtest() {
+void runtest()
+{
     Vector *vec = new_vector();
     expect(__LINE__, 0, vec->len);
 
     for (int i = 0; i < 100; i++)
         vec_push(vec, (void *)i);
-    
+
     expect(__LINE__, 100, vec->len);
     expect(__LINE__, 0, (int)vec->data[0]);
     expect(__LINE__, 50, (int)vec->data[50]);
@@ -188,26 +255,31 @@ void runtest() {
 }
 
 // Reports error
-void error(int i) {
-    fprintf(stderr, "Unexpected token: %d\n",
-                tokens[i].input);
-    exit(1);
-}
+//void error(int i)
+//{
+//    fprintf(stderr, "Unexpected token: %d\n",
+//            tokens[i].input);
+//    exit(1);
+//}
 
-int main(int argc, char **argv) {
-    if (argc != 2) {
+int main(int argc, char **argv)
+{
+    if (argc != 2)
+    {
         fprintf(stderr, "Incorrect number of arguments\n");
         return 1;
     }
 
-    if (strcmp(argv[1], "-test") == 0) {
+    if (strcmp(argv[1], "-test") == 0)
+    {
         runtest();
         return 0;
     }
 
-    // Tokenize input and parse 
-    tokenize(argv[1]);
-    Node *node = add();
+    Vector *tokens = new_vector(); // Initialize a token vector
+    // Tokenize input and parse
+    tokenize(argv[1], tokens);
+    Node *node = add(tokens);
 
     // Output the first part of assembly
     printf(".intel_syntax noprefix\n");
