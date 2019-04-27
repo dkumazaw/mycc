@@ -13,10 +13,6 @@ void gen(Node *node);
 void tokenize(char *p, Vector *tokens);
 void error(int i);
 
-// Tokenized tokens will be stored here
-// Expect only up to 100 tokens
-Token tokens[100];
-
 int pos = 0; // Stores current position when parsing tokens
 
 Node *new_node(int ty, Node *lhs, Node *rhs)
