@@ -5,21 +5,19 @@ Node *new_node(int ty, Node *lhs, Node *rhs);
 Node *new_node_num(int val);
 Vector *new_vector();
 void vec_push(Vector *vec, void *elem);
-int consume(int ty);
+int consume(Vector *tokens, int ty);
 Node *add();
 Node *mul();
 Node *term();
 void gen(Node *node);
-void tokenize(char *p);
+void tokenize(char *p, Vector *tokens);
 void error(int i);
 
 // Tokenized tokens will be stored here
 // Expect only up to 100 tokens
-
-Vector *token_vector = new_vector();
 Token tokens[100];
 
-int pos = 0;
+int pos = 0; // Stores current position when parsing tokens
 
 Node *new_node(int ty, Node *lhs, Node *rhs)
 {
@@ -38,7 +36,22 @@ Node *new_node_num(int val)
     return node;
 }
 
-// Creates a new vector
+/*
+Token *new_token
+
+Creates a new token
+*/
+Token *new_token()
+{
+    Token *token = malloc(sizeof(Token));
+    return token;
+}
+
+/*
+Vector *new_vector
+
+Creates a new vector and initializes its capacity to 16.
+*/
 Vector *new_vector()
 {
     Vector *vec = malloc(sizeof(Vector));
@@ -48,8 +61,11 @@ Vector *new_vector()
     return vec;
 }
 
-// Pushes an element to the vector
-// vec->data
+/*
+Vector *new_vector
+
+Pushes a new element to vec.
+*/
 void vec_push(Vector *vec, void *elem)
 {
     if (vec->capacity == vec->len)
@@ -60,61 +76,81 @@ void vec_push(Vector *vec, void *elem)
     vec->data[vec->len++] = elem;
 }
 
-int consume(int ty)
+/*
+consume
+
+Checks if the current position of the vector is of type ty
+*/
+int consume(Vector *tokens, int ty)
 {
-    if (tokens[pos].ty != ty)
+    if (((Token *)tokens->data[pos])->ty != ty)
         return 0;
     pos++;
     return 1;
 }
 
-Node *add()
+/*
+add
+
+Parser for + and - operations
+*/
+Node *add(Vector *tokens)
 {
-    Node *node = mul();
+    Node *node = mul(tokens);
 
     for (;;)
     {
-        if (consume('+'))
-            node = new_node('+', node, mul());
-        else if (consume('-'))
-            node = new_node('-', node, mul());
+        if (consume(tokens, '+'))
+            node = new_node('+', node, mul(tokens));
+        else if (consume(tokens, '-'))
+            node = new_node('-', node, mul(tokens));
         else
             return node;
     }
 }
 
-Node *mul()
+/*
+mul
+
+Parser for * and / operations
+*/
+Node *mul(Vector *tokens)
 {
-    Node *node = term();
+    Node *node = term(tokens);
 
     for (;;)
     {
-        if (consume('*'))
-            node = new_node('*', node, term());
-        else if (consume('/'))
-            node = new_node('/', node, term());
+        if (consume(tokens, '*'))
+            node = new_node('*', node, term(tokens));
+        else if (consume(tokens, '/'))
+            node = new_node('/', node, term(tokens));
         else
             return node;
     }
 }
 
-Node *term()
+/*
+term
+
+Parser for a terminal expression
+*/
+Node *term(Vector *tokens)
 {
-    if (consume('('))
+    if (consume(tokens, '('))
     {
-        Node *node = add();
-        if (!consume(')'))
+        Node *node = add(tokens);
+        if (!consume(tokens, ')'))
         {
-            fprintf(stderr, "No closing parenthesis: %s", tokens[pos].input);
+            fprintf(stderr, "No closing parenthesis: %s", ((Token *)tokens->data[pos])->input);
             exit(1);
         }
         return node;
     }
 
-    if (tokens[pos].ty == TK_NUM)
-        return new_node_num(tokens[pos++].val);
+    if (((Token *)tokens->data[pos])->ty == TK_NUM)
+        return new_node_num(((Token *)tokens->data[pos++])->val);
 
-    fprintf(stderr, "Token is neither an integer or parenthesis: %s", tokens[pos].input);
+    fprintf(stderr, "Token is neither an integer or parenthesis: %s", ((Token *)tokens->data[pos])->input);
     exit(1);
 }
 
@@ -152,10 +188,13 @@ void gen(Node *node)
     printf("  push rax\n");
 }
 
-// Tokenize the string pointed by p and store in tokens
-void tokenize(char *p)
+/*
+tokenize 
+
+Tokenizes the given string and stores the tokens in a vector
+*/
+void tokenize(char *p, Vector *tokens)
 {
-    int i = 0;
     while (*p)
     {
         // Skip whitespace
@@ -167,19 +206,21 @@ void tokenize(char *p)
 
         if (*p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p == ')')
         {
-            tokens[i].ty = *p;
-            tokens[i].input = p;
-            i++;
+            Token *token = new_token();
+            token->ty = *p;
+            token->input = p;
+            vec_push(tokens, (void *)token);
             p++;
             continue;
         }
 
         if (isdigit(*p))
         {
-            tokens[i].ty = TK_NUM;
-            tokens[i].input = p;
-            tokens[i].val = strtol(p, &p, 10);
-            i++;
+            Token *token = new_token();
+            token->ty = TK_NUM;
+            token->input = p;
+            token->val = strtol(p, &p, 10);
+            vec_push(tokens, (void *)token);
             continue;
         }
 
@@ -187,8 +228,10 @@ void tokenize(char *p)
         exit(1);
     }
 
-    tokens[i].ty = TK_EOF;
-    tokens[i].input = p;
+    Token *token = new_token();
+    token->ty = TK_EOF;
+    token->input = p;
+    vec_push(tokens, (void *)token);
 }
 
 int expect(int line, int expected, int actual)
@@ -237,9 +280,10 @@ int main(int argc, char **argv)
         return 0;
     }
 
+    Vector *tokens = new_vector(); // Initialize a token vector
     // Tokenize input and parse
-    tokenize(argv[1]);
-    Node *node = add();
+    tokenize(argv[1], tokens);
+    Node *node = add(tokens);
 
     // Output the first part of assembly
     printf(".intel_syntax noprefix\n");
