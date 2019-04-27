@@ -11,7 +11,7 @@ Node *mul();
 Node *term();
 void gen(Node *node);
 void tokenize(char *p, Vector *tokens);
-void error(int i);
+//void error(int i);
 
 int pos = 0; // Stores current position when parsing tokens
 
@@ -255,12 +255,12 @@ void runtest()
 }
 
 // Reports error
-void error(int i)
-{
-    fprintf(stderr, "Unexpected token: %d\n",
-            tokens[i].input);
-    exit(1);
-}
+//void error(int i)
+//{
+//    fprintf(stderr, "Unexpected token: %d\n",
+//            tokens[i].input);
+//    exit(1);
+//}
 
 int main(int argc, char **argv)
 {
