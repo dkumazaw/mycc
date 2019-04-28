@@ -13,7 +13,8 @@ void gen(Node *node);
 void tokenize(char *p, Vector *tokens);
 //void error(int i);
 
-int pos = 0; // Stores current position when parsing tokens
+int pos = 0;     // Stores current position when parsing tokens
+Node *code[100]; // TODO: replace this with a vector
 
 Node *new_node(int ty, Node *lhs, Node *rhs)
 {
@@ -148,6 +149,45 @@ Node *term(Vector *tokens)
 
     fprintf(stderr, "Token is neither an integer or parenthesis: %s", ((Token *)tokens->data[pos])->input);
     exit(1);
+}
+
+Node *assign(Vector *tokens)
+{
+    Node *node = add(tokens);
+    while (consume(tokens, '='))
+        node = new_node('=', node, assign(tokens));
+    return node;
+}
+
+/*
+stmt
+
+stmt: assign ";"
+*/
+Node *stmt(Vector *tokens)
+{
+    Node *node = assign(tokens);
+    if (!consume(tokens, ';'))
+    {
+        fprintf(stderr, "Invalid token found: expected ; but got %s", ((Token *)tokens->data[pos])->input);
+        exit(1);
+    }
+
+    return node;
+}
+
+/*
+program
+
+program: stmt program
+program: epsilon
+*/
+void program(Vector *tokens)
+{
+    int i = 0;
+    while (((Token *)tokens->data[pos])->ty != TK_EOF)
+        code[i++] = stmt(tokens);
+    code[i] = NULL;
 }
 
 // Generates assembler code
