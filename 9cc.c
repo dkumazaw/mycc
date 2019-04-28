@@ -87,9 +87,9 @@ int consume(Vector *tokens, int ty)
 }
 
 /*
-add
-
-Parser for + and - operations
+add: mul
+add: add "+" mul
+add: add "-" mul
 */
 Node *add(Vector *tokens)
 {
@@ -107,9 +107,9 @@ Node *add(Vector *tokens)
 }
 
 /*
-mul
-
-Parser for * and / operations
+mul: term
+mul: mul "*" term
+mul: mul "/" term
 */
 Node *mul(Vector *tokens)
 {
@@ -127,9 +127,9 @@ Node *mul(Vector *tokens)
 }
 
 /*
-term
-
-Parser for a terminal expression
+term: num
+term: ident
+term: "(" assign ")"
 */
 Node *term(Vector *tokens)
 {
