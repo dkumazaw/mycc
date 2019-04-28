@@ -151,6 +151,10 @@ Node *term(Vector *tokens)
     exit(1);
 }
 
+/*
+assign: add
+assign: add "=" assign
+*/
 Node *assign(Vector *tokens)
 {
     Node *node = add(tokens);
