@@ -13,6 +13,7 @@ enum
 enum
 {
     ND_NUM = 256, // integer node type
+    ND_IDENT,     // identifier
 };
 
 /*
@@ -31,12 +32,17 @@ typedef struct
     char *input; // token str (for error message)
 } Token;
 
+/*
+struct Node
+
+*/
 typedef struct Node
 {
     int ty; // operator or ND_NUM
     struct Node *lhs;
     struct Node *rhs;
-    int val;
+    int val;   // Used only when ty is ND_NUM
+    char name; // Used only when ty is ND_IDENT
 } Node;
 
 typedef struct
