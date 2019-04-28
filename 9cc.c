@@ -160,8 +160,6 @@ Node *assign(Vector *tokens)
 }
 
 /*
-stmt
-
 stmt: assign ";"
 */
 Node *stmt(Vector *tokens)
@@ -177,8 +175,6 @@ Node *stmt(Vector *tokens)
 }
 
 /*
-program
-
 program: stmt program
 program: epsilon
 */
