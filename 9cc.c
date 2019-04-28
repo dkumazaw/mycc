@@ -295,7 +295,7 @@ void tokenize(char *p, Vector *tokens)
             continue;
         }
 
-        if (*p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p == ')')
+        if (*p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p == ')' || *p == ';')
         {
             Token *token = new_token();
             token->ty = *p;
