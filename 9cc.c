@@ -16,6 +16,9 @@ void tokenize(char *p, Vector *tokens);
 int pos = 0;     // Stores current position when parsing tokens
 Node *code[100]; // TODO: replace this with a vector
 
+/*
+Creates a new node w/ lhr and rhs
+*/
 Node *new_node(int ty, Node *lhs, Node *rhs)
 {
     Node *node = malloc(sizeof(Node));
@@ -25,11 +28,25 @@ Node *new_node(int ty, Node *lhs, Node *rhs)
     return node;
 }
 
+/*
+Creates a number node
+*/
 Node *new_node_num(int val)
 {
     Node *node = malloc(sizeof(Node));
     node->ty = ND_NUM;
     node->val = val;
+    return node;
+}
+
+/* 
+Creates a ident node
+*/
+Node *new_node_ident(char name)
+{
+    Node *node = malloc(sizeof(Node));
+    node->ty = ND_IDENT;
+    node->name = name;
     return node;
 }
 
@@ -146,6 +163,9 @@ Node *term(Vector *tokens)
 
     if (((Token *)tokens->data[pos])->ty == TK_NUM)
         return new_node_num(((Token *)tokens->data[pos++])->val);
+
+    if (((Token *)tokens->data[pos])->ty == TK_IDENT)
+        return new_node_ident(*(((Token *)tokens->data[pos++])->input));
 
     fprintf(stderr, "Token is neither an integer or parenthesis: %s", ((Token *)tokens->data[pos])->input);
     exit(1);
