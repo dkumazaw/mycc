@@ -6,6 +6,7 @@
 enum
 {
     TK_NUM = 256, // integer token
+    TK_IDENT,     // identifier
     TK_EOF,       // token representing end of input
 };
 
