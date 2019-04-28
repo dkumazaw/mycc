@@ -359,14 +359,6 @@ void runtest()
     printf("OK\n");
 }
 
-// Reports error
-//void error(int i)
-//{
-//    fprintf(stderr, "Unexpected token: %d\n",
-//            tokens[i].input);
-//    exit(1);
-//}
-
 int main(int argc, char **argv)
 {
     if (argc != 2)
