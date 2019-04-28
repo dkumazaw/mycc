@@ -312,7 +312,6 @@ void tokenize(char *p, Vector *tokens)
             token->input = p;
             token->val = strtol(p, &p, 10);
             vec_push(tokens, (void *)token);
-            p++;
             continue;
         }
 
