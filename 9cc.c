@@ -4,6 +4,10 @@
 Node *new_node(int ty, Node *lhs, Node *rhs);
 Node *new_node_num(int val);
 Vector *new_vector();
+Node *add(Vector *tokens);
+Node *mul(Vector *tokens);
+Node *unary(Vector *tokens);
+Node *term(Vector *tokens);
 void vec_push(Vector *vec, void *elem);
 int consume(Vector *tokens, int ty);
 void gen(Node *node);
