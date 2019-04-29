@@ -1,5 +1,7 @@
 #include "9cc.h"
 
+int pos = 0;
+
 int expect(int line, int expected, int actual)
 {
     if (expected == actual)

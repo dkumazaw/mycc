@@ -52,3 +52,29 @@ typedef struct
     int capacity;
     int len;
 } Vector;
+
+// Function prototypes
+Node *new_node(int ty, Node *lhs, Node *rhs);
+Node *new_node_num(int val);
+Token *new_token();
+Vector *new_vector();
+void vec_push(Vector *vec, void *elem);
+
+// parse.c
+int consume(Vector *tokens, int ty);
+Node *add(Vector *tokens);
+Node *mul(Vector *tokens);
+Node *unary(Vector *tokens);
+Node *term(Vector *tokens);
+Node *relational(Vector *tokens);
+Node *equality(Vector *tokens);
+void vec_push(Vector *vec, void *elem);
+
+// codegen.c
+void gen(Node *node);
+
+// tokenize.c
+void tokenize(char *p, Vector *tokens);
+
+// main.c
+extern int pos;
