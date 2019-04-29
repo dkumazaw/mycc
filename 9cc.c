@@ -115,6 +115,21 @@ relational: relational ">=" add
 */
 Node *relational(Vector *tokens)
 {
+    Node *node = add(tokens);
+
+    for (;;)
+    {
+        if (consume(tokens, '<'))
+            node = new_node('<', node, add(tokens));
+        else if (consume(tokens, TK_LE))
+            node = new_node(ND_LE, node, add(tokens));
+        else if (consume(tokens, '>'))
+            node = new_node('>', node, add(tokens));
+        else if (consume(tokens, TK_GE))
+            node = new_node(ND_GE, node, add(tokens));
+        else
+            return node;
+    }
 }
 
 /*
