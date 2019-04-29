@@ -132,7 +132,7 @@ Node *unary(Vector *tokens)
     if (consume(tokens, '+'))
         return term(tokens);
     if (consume(tokens, '-'))
-        return term(tokens);
+        return new_node('-', new_node_num(0), term(tokens));
     return term(tokens);
 }
 
