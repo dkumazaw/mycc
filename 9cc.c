@@ -124,9 +124,9 @@ Node *relational(Vector *tokens)
         else if (consume(tokens, TK_LE))
             node = new_node(ND_LE, node, add(tokens));
         else if (consume(tokens, '>'))
-            node = new_node('>', node, add(tokens));
+            node = new_node('<', add(tokens), node); // Flip to represent <
         else if (consume(tokens, TK_GE))
-            node = new_node(ND_GE, node, add(tokens));
+            node = new_node(ND_LE, add(tokens), node); // Flip to represent <=
         else
             return node;
     }
@@ -227,6 +227,26 @@ void gen(Node *node)
 
     switch (node->ty)
     {
+    case ND_EQ:
+        printf("  cmp rax, rdi\n");
+        printf("  sete al\n");
+        printf("  movzb rax, al\n");
+        break;
+    case ND_NE:
+        printf("  cmp rax, rdi\n");
+        printf("  setne al\n");
+        printf("  movzb rax, al\n");
+        break;
+    case '<':
+        printf("  cmp rax, rdi\n");
+        printf("  setl al\n");
+        printf("  movzb rax, al\n");
+        break;
+    case ND_LE:
+        printf("  cmp rax, rdi\n");
+        printf("  setle al\n");
+        printf("  movzb rax, al\n");
+        break;
     case '+':
         printf("  add rax, rdi\n");
         break;
