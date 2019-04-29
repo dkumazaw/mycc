@@ -240,6 +240,44 @@ void tokenize(char *p, Vector *tokens)
             continue;
         }
 
+        if (strncmp(p, "==", 2) == 0)
+        {
+            Token *token = new_token();
+            token->ty = TK_EQ;
+            token->input = p;
+            p += 2;
+            continue;
+        }
+
+        if (strncmp(p, "!=", 2) == 0)
+        {
+            Token *token = new_token();
+            token->ty = TK_NE;
+            token->input = p;
+            p += 2;
+            continue;
+        }
+
+        if (strncmp(p, "<=", 2) == 0)
+        {
+            Token *token = new_token();
+            token->ty = TK_LE;
+            token->input = p;
+            vec_push(tokens, (void *)token);
+            p += 2;
+            continue;
+        }
+
+        if (strncmp(p, ">=", 2) == 0)
+        {
+            Token *token = new_token();
+            token->ty = TK_GE;
+            token->input = p;
+            vec_push(tokens, (void *)token);
+            p += 2;
+            continue;
+        }
+
         if (*p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p == ')')
         {
             Token *token = new_token();
