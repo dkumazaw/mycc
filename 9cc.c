@@ -97,7 +97,12 @@ Node *equality(Vector *tokens)
 
     for (;;)
     {
-        if (consume)
+        if (consume(tokens, TK_EQ))
+            node = new_node(ND_EQ, node, relational(tokens));
+        else if (consume(tokens, TK_NE))
+            node = new_node(ND_NE, node, relational(tokens));
+        else
+            return node;
     }
 }
 
