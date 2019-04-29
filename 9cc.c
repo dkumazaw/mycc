@@ -287,6 +287,7 @@ void tokenize(char *p, Vector *tokens)
             Token *token = new_token();
             token->ty = TK_EQ;
             token->input = p;
+            vec_push(tokens, (void *)token);
             p += 2;
             continue;
         }
@@ -296,6 +297,7 @@ void tokenize(char *p, Vector *tokens)
             Token *token = new_token();
             token->ty = TK_NE;
             token->input = p;
+            vec_push(tokens, (void *)token);
             p += 2;
             continue;
         }
