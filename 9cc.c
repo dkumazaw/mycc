@@ -87,9 +87,9 @@ int consume(Vector *tokens, int ty)
 }
 
 /*
-add
-
-Parser for + and - operations
+add: mul
+add: mul "+" mul
+add: mul "-" mul
 */
 Node *add(Vector *tokens)
 {
@@ -107,9 +107,9 @@ Node *add(Vector *tokens)
 }
 
 /*
-mul
-
-Parser for * and / operations
+mul: unary
+mul: mul "*" unary
+mul: mul "/" unary
 */
 Node *mul(Vector *tokens)
 {
@@ -141,9 +141,8 @@ Node *unary(Vector *tokens)
 }
 
 /*
-term
-
-Parser for a terminal expression
+term: num
+term: "(" equality ")"
 */
 Node *term(Vector *tokens)
 {
