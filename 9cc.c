@@ -87,6 +87,32 @@ int consume(Vector *tokens, int ty)
 }
 
 /*
+equality: relational
+equality: equality "==" relational
+equality: equality "!=" relational
+*/
+Node *equality(Vector *tokens)
+{
+    Node *node = relational(tokens);
+
+    for (;;)
+    {
+        if (consume)
+    }
+}
+
+/*
+relational: add
+relational: relational "<"  add
+relational: relational "<=" add
+relational: relational ">"  add
+relational: relational ">=" add
+*/
+Node *relational(Vector *tokens)
+{
+}
+
+/*
 add: mul
 add: mul "+" mul
 add: mul "-" mul
