@@ -4,11 +4,12 @@
 Node *new_node(int ty, Node *lhs, Node *rhs);
 Node *new_node_num(int val);
 Vector *new_vector();
+Node *add(Vector *tokens);
+Node *mul(Vector *tokens);
+Node *unary(Vector *tokens);
+Node *term(Vector *tokens);
 void vec_push(Vector *vec, void *elem);
 int consume(Vector *tokens, int ty);
-Node *add();
-Node *mul();
-Node *term();
 void gen(Node *node);
 void tokenize(char *p, Vector *tokens);
 //void error(int i);
@@ -112,7 +113,7 @@ Parser for * and / operations
 */
 Node *mul(Vector *tokens)
 {
-    Node *node = term(tokens);
+    Node *node = unary(tokens);
 
     for (;;)
     {
@@ -123,6 +124,20 @@ Node *mul(Vector *tokens)
         else
             return node;
     }
+}
+
+/*
+unary: term
+unary: "+" term
+unary: "-" term
+*/
+Node *unary(Vector *tokens)
+{
+    if (consume(tokens, '+'))
+        return term(tokens);
+    if (consume(tokens, '-'))
+        return new_node('-', new_node_num(0), term(tokens));
+    return term(tokens);
 }
 
 /*
@@ -253,14 +268,6 @@ void runtest()
 
     printf("OK\n");
 }
-
-// Reports error
-//void error(int i)
-//{
-//    fprintf(stderr, "Unexpected token: %d\n",
-//            tokens[i].input);
-//    exit(1);
-//}
 
 int main(int argc, char **argv)
 {
