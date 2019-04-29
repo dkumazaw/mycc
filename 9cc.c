@@ -196,7 +196,7 @@ Node *term(Vector *tokens)
 {
     if (consume(tokens, '('))
     {
-        Node *node = add(tokens);
+        Node *node = equality(tokens);
         if (!consume(tokens, ')'))
         {
             fprintf(stderr, "No closing parenthesis: %s", ((Token *)tokens->data[pos])->input);
