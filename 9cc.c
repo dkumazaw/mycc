@@ -6,9 +6,6 @@ Node *new_node_num(int val);
 Vector *new_vector();
 void vec_push(Vector *vec, void *elem);
 int consume(Vector *tokens, int ty);
-Node *add();
-Node *mul();
-Node *term();
 void gen(Node *node);
 void tokenize(char *p, Vector *tokens);
 //void error(int i);
@@ -112,7 +109,7 @@ Parser for * and / operations
 */
 Node *mul(Vector *tokens)
 {
-    Node *node = term(tokens);
+    Node *node = unary(tokens);
 
     for (;;)
     {
@@ -123,6 +120,20 @@ Node *mul(Vector *tokens)
         else
             return node;
     }
+}
+
+/*
+unary: term
+unary: "+" term
+unary: "-" term
+*/
+Node *unary(Vector *tokens)
+{
+    if (consume(tokens, '+'))
+        return term(tokens);
+    if (consume(tokens, '-'))
+        return term(tokens);
+    return term(tokens);
 }
 
 /*
