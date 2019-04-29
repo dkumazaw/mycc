@@ -391,7 +391,7 @@ int main(int argc, char **argv)
     Vector *tokens = new_vector(); // Initialize a token vector
     // Tokenize input and parse
     tokenize(argv[1], tokens);
-    Node *node = add(tokens);
+    Node *node = equality(tokens);
 
     // Output the first part of assembly
     printf(".intel_syntax noprefix\n");
