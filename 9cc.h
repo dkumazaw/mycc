@@ -16,6 +16,10 @@ enum
 enum
 {
     ND_NUM = 256, // integer node type
+    ND_EQ,        // ==
+    ND_NE,        // !=
+    ND_LE,        // <=
+    ND_GE,        // >=
 };
 
 /*
