@@ -8,6 +8,8 @@ Node *add(Vector *tokens);
 Node *mul(Vector *tokens);
 Node *unary(Vector *tokens);
 Node *term(Vector *tokens);
+Node *relational(Vector *tokens);
+Node *equality(Vector *tokens);
 void vec_push(Vector *vec, void *elem);
 int consume(Vector *tokens, int ty);
 void gen(Node *node);
@@ -87,9 +89,55 @@ int consume(Vector *tokens, int ty)
 }
 
 /*
-add
+equality: relational
+equality: equality "==" relational
+equality: equality "!=" relational
+*/
+Node *equality(Vector *tokens)
+{
+    Node *node = relational(tokens);
 
-Parser for + and - operations
+    for (;;)
+    {
+        if (consume(tokens, TK_EQ))
+            node = new_node(ND_EQ, node, relational(tokens));
+        else if (consume(tokens, TK_NE))
+            node = new_node(ND_NE, node, relational(tokens));
+        else
+            return node;
+    }
+}
+
+/*
+relational: add
+relational: relational "<"  add
+relational: relational "<=" add
+relational: relational ">"  add
+relational: relational ">=" add
+*/
+Node *relational(Vector *tokens)
+{
+    Node *node = add(tokens);
+
+    for (;;)
+    {
+        if (consume(tokens, '<'))
+            node = new_node('<', node, add(tokens));
+        else if (consume(tokens, TK_LE))
+            node = new_node(ND_LE, node, add(tokens));
+        else if (consume(tokens, '>'))
+            node = new_node('<', add(tokens), node); // Flip to represent <
+        else if (consume(tokens, TK_GE))
+            node = new_node(ND_LE, add(tokens), node); // Flip to represent <=
+        else
+            return node;
+    }
+}
+
+/*
+add: mul
+add: mul "+" mul
+add: mul "-" mul
 */
 Node *add(Vector *tokens)
 {
@@ -107,9 +155,9 @@ Node *add(Vector *tokens)
 }
 
 /*
-mul
-
-Parser for * and / operations
+mul: unary
+mul: mul "*" unary
+mul: mul "/" unary
 */
 Node *mul(Vector *tokens)
 {
@@ -141,15 +189,14 @@ Node *unary(Vector *tokens)
 }
 
 /*
-term
-
-Parser for a terminal expression
+term: num
+term: "(" equality ")"
 */
 Node *term(Vector *tokens)
 {
     if (consume(tokens, '('))
     {
-        Node *node = add(tokens);
+        Node *node = equality(tokens);
         if (!consume(tokens, ')'))
         {
             fprintf(stderr, "No closing parenthesis: %s", ((Token *)tokens->data[pos])->input);
@@ -182,6 +229,26 @@ void gen(Node *node)
 
     switch (node->ty)
     {
+    case ND_EQ:
+        printf("  cmp rax, rdi\n");
+        printf("  sete al\n");
+        printf("  movzb rax, al\n");
+        break;
+    case ND_NE:
+        printf("  cmp rax, rdi\n");
+        printf("  setne al\n");
+        printf("  movzb rax, al\n");
+        break;
+    case '<':
+        printf("  cmp rax, rdi\n");
+        printf("  setl al\n");
+        printf("  movzb rax, al\n");
+        break;
+    case ND_LE:
+        printf("  cmp rax, rdi\n");
+        printf("  setle al\n");
+        printf("  movzb rax, al\n");
+        break;
     case '+':
         printf("  add rax, rdi\n");
         break;
@@ -215,7 +282,47 @@ void tokenize(char *p, Vector *tokens)
             continue;
         }
 
-        if (*p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p == ')')
+        if (strncmp(p, "==", 2) == 0)
+        {
+            Token *token = new_token();
+            token->ty = TK_EQ;
+            token->input = p;
+            vec_push(tokens, (void *)token);
+            p += 2;
+            continue;
+        }
+
+        if (strncmp(p, "!=", 2) == 0)
+        {
+            Token *token = new_token();
+            token->ty = TK_NE;
+            token->input = p;
+            vec_push(tokens, (void *)token);
+            p += 2;
+            continue;
+        }
+
+        if (strncmp(p, "<=", 2) == 0)
+        {
+            Token *token = new_token();
+            token->ty = TK_LE;
+            token->input = p;
+            vec_push(tokens, (void *)token);
+            p += 2;
+            continue;
+        }
+
+        if (strncmp(p, ">=", 2) == 0)
+        {
+            Token *token = new_token();
+            token->ty = TK_GE;
+            token->input = p;
+            vec_push(tokens, (void *)token);
+            p += 2;
+            continue;
+        }
+
+        if (*p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p == ')' || *p == '<' || *p == '>')
         {
             Token *token = new_token();
             token->ty = *p;
@@ -286,7 +393,7 @@ int main(int argc, char **argv)
     Vector *tokens = new_vector(); // Initialize a token vector
     // Tokenize input and parse
     tokenize(argv[1], tokens);
-    Node *node = add(tokens);
+    Node *node = equality(tokens);
 
     // Output the first part of assembly
     printf(".intel_syntax noprefix\n");

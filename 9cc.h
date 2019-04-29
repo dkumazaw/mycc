@@ -6,12 +6,20 @@
 enum
 {
     TK_NUM = 256, // integer token
+    TK_EQ,        // ==
+    TK_NE,        // !=
+    TK_LE,        // <=
+    TK_GE,        // >=
     TK_EOF,       // token representing end of input
 };
 
 enum
 {
     ND_NUM = 256, // integer node type
+    ND_EQ,        // ==
+    ND_NE,        // !=
+    ND_LE,        // <=
+    ND_GE,        // >=
 };
 
 /*
