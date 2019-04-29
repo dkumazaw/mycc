@@ -118,9 +118,9 @@ Node *mul(Vector *tokens)
     for (;;)
     {
         if (consume(tokens, '*'))
-            node = new_node('*', node, term(tokens));
+            node = new_node('*', node, unary(tokens));
         else if (consume(tokens, '/'))
-            node = new_node('/', node, term(tokens));
+            node = new_node('/', node, unary(tokens));
         else
             return node;
     }
