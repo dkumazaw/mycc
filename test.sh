@@ -37,5 +37,7 @@ try 0 "11 !=  11;"
 try 1 "a =  +1; a;"
 try 4 "z = 2 * 2; z;"
 try 1 "h = 4 + (1-3); h > 0;"
+try 3 "a = 3; return a; return 4;"
+try 10 "b = 2 * 5; return b;"
 
 echo OK
