@@ -6,6 +6,7 @@
 enum
 {
     TK_NUM = 256, // integer token
+    TK_IDENT,     // Identifier
     TK_EQ,        // ==
     TK_NE,        // !=
     TK_LE,        // <=
@@ -78,3 +79,4 @@ void tokenize(char *p, Vector *tokens);
 
 // main.c
 extern int pos;
+extern Node *code[100];
