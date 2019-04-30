@@ -56,9 +56,10 @@ typedef struct
     int len;
 } Vector;
 
-// Function prototypes
+// container.c
 Node *new_node(int ty, Node *lhs, Node *rhs);
 Node *new_node_num(int val);
+Node *new_node_ident(char name);
 Token *new_token();
 Vector *new_vector();
 void vec_push(Vector *vec, void *elem);
