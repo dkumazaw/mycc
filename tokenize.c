@@ -1,5 +1,13 @@
 #include "9cc.h"
 
+int is_alnum(char c)
+{
+    return ('a' <= c && c <= 'z') ||
+           ('A' <= c && c <= 'Z') ||
+           ('0' <= c && c <= '9') ||
+           (c == '_');
+}
+
 /*
 tokenize 
 */
@@ -11,6 +19,16 @@ void tokenize(char *p, Vector *tokens)
         if (isspace(*p))
         {
             p++;
+            continue;
+        }
+
+        if (strncmp(p, "return", 6) == 0 && !is_alnum(p[6]))
+        {
+            Token *token = new_token();
+            token->ty = TK_RETURN;
+            token->input = p;
+            vec_push(tokens, (void *)token);
+            p += 6;
             continue;
         }
 
