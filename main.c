@@ -11,7 +11,22 @@ int expect(int line, int expected, int actual)
     exit(1);
 }
 
-void runtest()
+void test_map()
+{
+    Map *map = new_map();
+    expect(__LINE__, 0, (long)map_get(map, "foo"));
+
+    map_put(map, "foo", (void *)2);
+    expect(__LINE__, 2, (long)map_get(map, "foo"));
+
+    map_put(map, "bar", (void *)4);
+    expect(__LINE__, 4, (long)map_get(map, "bar"));
+
+    map_put(map, "foo", (void *)6);
+    expect(__LINE__, 6, (long)map_get(map, "foo")); // Scanned from bottom, so should see 6
+}
+
+void test_vector()
 {
     Vector *vec = new_vector();
     expect(__LINE__, 0, vec->len);
@@ -37,7 +52,8 @@ int main(int argc, char **argv)
 
     if (strcmp(argv[1], "-test") == 0)
     {
-        runtest();
+        test_vector();
+        test_map();
         return 0;
     }
 
