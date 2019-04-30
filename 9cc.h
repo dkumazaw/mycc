@@ -65,6 +65,9 @@ void vec_push(Vector *vec, void *elem);
 
 // parse.c
 int consume(Vector *tokens, int ty);
+void *program(Vector *tokens);
+Node *assign(Vector *tokens);
+Node *stmt(Vector *tokens);
 Node *add(Vector *tokens);
 Node *mul(Vector *tokens);
 Node *unary(Vector *tokens);

@@ -43,19 +43,28 @@ int main(int argc, char **argv)
     Vector *tokens = new_vector(); // Initialize a token vector
     // Tokenize input and parse
     tokenize(argv[1], tokens);
-    Node *node = equality(tokens);
+    Node *node = program(tokens);
 
     // Output the first part of assembly
     printf(".intel_syntax noprefix\n");
     printf(".global main\n");
     printf("main:\n");
 
-    // Descend the tree and generate code
-    gen(node);
+    // Prolog
+    // Get enough space for 26 variables
+    printf("  push rbp\n");
+    printf("  mov rbp, rsp\n");
+    printf("  sub rsp, 208\n");
 
-    // Fetch the last value on the stack
-    // and load it to rax
-    printf("  pop rax\n");
+    for (int i = 0; code[i]; i++)
+    {
+        gen(code[i]);
+        printf("  pop rax\n");
+    }
+
+    // Epilog
+    printf("  mov rsp, rbp\n");
+    printf("  pop rbp\n");
     printf("  ret\n");
     return 0;
 }
