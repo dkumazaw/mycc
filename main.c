@@ -1,6 +1,7 @@
 #include "9cc.h"
 
 int pos = 0;
+Node *code[100];
 
 int expect(int line, int expected, int actual)
 {
