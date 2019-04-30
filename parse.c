@@ -36,11 +36,24 @@ Node *assign(Vector *tokens)
 }
 
 /*
+stmt: "return" assign ";"
 stmt: assign ";"
 */
 Node *stmt(Vector *tokens)
 {
-    Node *node = assign(tokens);
+    Node *node;
+
+    if (consume(tokens, TK_RETURN))
+    {
+        node = malloc(sizeof(Node));
+        node->ty = ND_RETURN;
+        node->lhs = assign(tokens);
+    }
+    else
+    {
+        node = assign(tokens);
+    }
+
     if (!consume(tokens, ';'))
     {
         fprintf(stderr, "Expected ';' but got %s", ((Token *)tokens->data[pos])->input);

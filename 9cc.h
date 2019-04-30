@@ -19,6 +19,7 @@ enum
 {
     ND_NUM = 256, // integer node type
     ND_IDENT,     // Idenfitifer
+    ND_RETURN,    // return
     ND_EQ,        // ==
     ND_NE,        // !=
     ND_LE,        // <=
