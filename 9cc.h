@@ -58,6 +58,12 @@ typedef struct
     int len;
 } Vector;
 
+typedef struct
+{
+    Vector *keys;
+    Vector *vals;
+} Map;
+
 // container.c
 Node *new_node(int ty, Node *lhs, Node *rhs);
 Node *new_node_num(int val);
@@ -65,6 +71,9 @@ Node *new_node_ident(char name);
 Token *new_token();
 Vector *new_vector();
 void vec_push(Vector *vec, void *elem);
+Map *new_map();
+void map_put(Map *map, char *key, void *val);
+void *map_get(Map *map, char *key);
 
 // parse.c
 int consume(Vector *tokens, int ty);
