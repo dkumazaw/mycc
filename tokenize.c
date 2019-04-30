@@ -64,6 +64,16 @@ void tokenize(char *p, Vector *tokens)
             continue;
         }
 
+        if ('a' <= *p && *p <= 'z')
+        {
+            Token *token = new_token();
+            token->ty = TK_IDENT;
+            token->input = p;
+            vec_push(tokens, (void *)token);
+            p++;
+            continue;
+        }
+
         if (isdigit(*p))
         {
             Token *token = new_token();
