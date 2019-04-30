@@ -74,6 +74,7 @@ Node *equality(Vector *tokens);
 void vec_push(Vector *vec, void *elem);
 
 // codegen.c
+void gen_lval(Node *node);
 void gen(Node *node);
 
 // tokenize.c
