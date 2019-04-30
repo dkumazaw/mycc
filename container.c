@@ -67,7 +67,7 @@ void vec_push(Vector *vec, void *elem)
 
 Map *new_map()
 {
-    Map *map = mallow(sizeof(Map));
+    Map *map = malloc(sizeof(Map));
     map->keys = new_vector();
     map->vals = new_vector();
     return map;
