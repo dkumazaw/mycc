@@ -42,10 +42,11 @@ typedef struct
 
 typedef struct Node
 {
-    int ty; // operator or ND_NUM
-    struct Node *lhs;
-    struct Node *rhs;
-    int val;
+    int ty;           // type
+    struct Node *lhs; // lhs
+    struct Node *rhs; // rhs
+    int val;          // Used only when ty is ND_NUM
+    char name;        // Used only when ty is ND_IDENT
 } Node;
 
 typedef struct
