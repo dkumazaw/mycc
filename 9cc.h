@@ -7,6 +7,7 @@ enum
 {
     TK_NUM = 256, // integer token
     TK_IDENT,     // Identifier
+    TK_RETURN,    // return
     TK_EQ,        // ==
     TK_NE,        // !=
     TK_LE,        // <=
@@ -18,6 +19,7 @@ enum
 {
     ND_NUM = 256, // integer node type
     ND_IDENT,     // Idenfitifer
+    ND_RETURN,    // return
     ND_EQ,        // ==
     ND_NE,        // !=
     ND_LE,        // <=
@@ -82,6 +84,7 @@ void gen_lval(Node *node);
 void gen(Node *node);
 
 // tokenize.c
+int is_alnum(char c);
 void tokenize(char *p, Vector *tokens);
 
 // main.c

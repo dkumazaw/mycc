@@ -23,6 +23,16 @@ void gen(Node *node)
         return;
     }
 
+    if (node->ty == ND_RETURN)
+    {
+        gen(node->lhs);
+        printf("  pop rax\n");
+        printf("  mov rsp, rbp\n");
+        printf("  pop rbp\n");
+        printf("  ret\n");
+        return;
+    }
+
     // Case where variable appears on the RHS:
     // Want to treat it like a right value
     if (node->ty == ND_IDENT)
