@@ -12,6 +12,44 @@ int consume(Vector *tokens, int ty)
 }
 
 /*
+program: stmt program
+program: epsion
+*/
+void *program(Vector *tokens)
+{
+    int i = 0;
+    while (((Token *)tokens->data[pos])->ty != TK_EOF)
+        code[i++] = stmt(tokens);
+    code[i] = NULL;
+}
+
+/*
+assign: equality
+assign: equality "=" assign
+*/
+Node *assign(Vector *tokens)
+{
+    Node *node = equality(tokens);
+    while (consume(tokens, '='))
+        node = new_node('=', node, assign(tokens));
+    return node;
+}
+
+/*
+stmt: assign ";"
+*/
+Node *stmt(Vector *tokens)
+{
+    Node *node = assign(tokens);
+    if (!consume(tokens, ';'))
+    {
+        fprintf(stderr, "Expected ';' but got %s", ((Token *)tokens->data[pos])->input);
+        exit(1);
+    }
+    return node;
+}
+
+/*
 equality: relational
 equality: equality "==" relational
 equality: equality "!=" relational
@@ -113,13 +151,14 @@ Node *unary(Vector *tokens)
 
 /*
 term: num
-term: "(" equality ")"
+term: ident
+term: "(" assign ")"
 */
 Node *term(Vector *tokens)
 {
     if (consume(tokens, '('))
     {
-        Node *node = equality(tokens);
+        Node *node = assign(tokens);
         if (!consume(tokens, ')'))
         {
             fprintf(stderr, "No closing parenthesis: %s", ((Token *)tokens->data[pos])->input);
@@ -130,6 +169,9 @@ Node *term(Vector *tokens)
 
     if (((Token *)tokens->data[pos])->ty == TK_NUM)
         return new_node_num(((Token *)tokens->data[pos++])->val);
+
+    if (((Token *)tokens->data[pos])->ty == TK_IDENT)
+        return new_node_ident(*(((Token *)tokens->data[pos++])->input));
 
     fprintf(stderr, "Token is neither an integer or parenthesis: %s", ((Token *)tokens->data[pos])->input);
     exit(1);
