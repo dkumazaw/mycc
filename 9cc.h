@@ -6,6 +6,7 @@
 enum
 {
     TK_NUM = 256, // integer token
+    TK_IDENT,     // Identifier
     TK_EQ,        // ==
     TK_NE,        // !=
     TK_LE,        // <=
@@ -16,6 +17,7 @@ enum
 enum
 {
     ND_NUM = 256, // integer node type
+    ND_IDENT,     // Idenfitifer
     ND_EQ,        // ==
     ND_NE,        // !=
     ND_LE,        // <=
@@ -40,10 +42,11 @@ typedef struct
 
 typedef struct Node
 {
-    int ty; // operator or ND_NUM
-    struct Node *lhs;
-    struct Node *rhs;
-    int val;
+    int ty;           // type
+    struct Node *lhs; // lhs
+    struct Node *rhs; // rhs
+    int val;          // Used only when ty is ND_NUM
+    char name;        // Used only when ty is ND_IDENT
 } Node;
 
 typedef struct
@@ -53,15 +56,19 @@ typedef struct
     int len;
 } Vector;
 
-// Function prototypes
+// container.c
 Node *new_node(int ty, Node *lhs, Node *rhs);
 Node *new_node_num(int val);
+Node *new_node_ident(char name);
 Token *new_token();
 Vector *new_vector();
 void vec_push(Vector *vec, void *elem);
 
 // parse.c
 int consume(Vector *tokens, int ty);
+void *program(Vector *tokens);
+Node *assign(Vector *tokens);
+Node *stmt(Vector *tokens);
 Node *add(Vector *tokens);
 Node *mul(Vector *tokens);
 Node *unary(Vector *tokens);
@@ -71,6 +78,7 @@ Node *equality(Vector *tokens);
 void vec_push(Vector *vec, void *elem);
 
 // codegen.c
+void gen_lval(Node *node);
 void gen(Node *node);
 
 // tokenize.c
@@ -78,3 +86,4 @@ void tokenize(char *p, Vector *tokens);
 
 // main.c
 extern int pos;
+extern Node *code[100];

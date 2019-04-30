@@ -54,10 +54,20 @@ void tokenize(char *p, Vector *tokens)
             continue;
         }
 
-        if (*p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p == ')' || *p == '<' || *p == '>')
+        if (*p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p == ')' || *p == '<' || *p == '>' || *p == ';' || *p == '=')
         {
             Token *token = new_token();
             token->ty = *p;
+            token->input = p;
+            vec_push(tokens, (void *)token);
+            p++;
+            continue;
+        }
+
+        if ('a' <= *p && *p <= 'z')
+        {
+            Token *token = new_token();
+            token->ty = TK_IDENT;
             token->input = p;
             vec_push(tokens, (void *)token);
             p++;
