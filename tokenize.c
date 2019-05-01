@@ -1,5 +1,14 @@
 #include "9cc.h"
 
+// Returns true if a char is [a-zA-Z_]
+int is_al(char c)
+{
+    return ('a' <= c && c <= 'z') ||
+           ('A' <= c && c <= 'Z') ||
+           (c == '_');
+}
+
+// Returns true if a char is [a-zA-Z0-9_]
 int is_alnum(char c)
 {
     return ('a' <= c && c <= 'z') ||

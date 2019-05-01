@@ -39,6 +39,7 @@ typedef struct
 {
     int ty;      // type of token
     int val;     // if ty is TK_NUM, store its value
+    char *name;  // if ty is TK_IDENT, store its value
     char *input; // token str (for error message)
 } Token;
 
@@ -93,6 +94,7 @@ void gen_lval(Node *node);
 void gen(Node *node);
 
 // tokenize.c
+int is_al(char c);
 int is_alnum(char c);
 void tokenize(char *p, Vector *tokens);
 
