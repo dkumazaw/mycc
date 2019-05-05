@@ -184,7 +184,14 @@ Node *term(Vector *tokens)
         return new_node_num(((Token *)tokens->data[pos++])->val);
 
     if (((Token *)tokens->data[pos])->ty == TK_IDENT)
-        return new_node_ident(*(((Token *)tokens->data[pos++])->input));
+    {
+        size_t ident_mem_pos = map_get(idents_to_offsets, ((Token *)tokens->data[pos])->name);
+        if (ident_mem_pos == NULL)
+        {
+            size_t offset = ((num_idents++) + 1) * 8;
+        }
+        return new_node_ident(((Token *)tokens->data[pos])->name);
+    }
 
     fprintf(stderr, "Token is neither an integer or parenthesis: %s", ((Token *)tokens->data[pos])->input);
     exit(1);
