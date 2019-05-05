@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "9cc.h"
 
 // Returns true if a char is [a-zA-Z_]
