@@ -49,7 +49,7 @@ typedef struct Node
     struct Node *lhs; // lhs
     struct Node *rhs; // rhs
     int val;          // Used only when ty is ND_NUM
-    char name;        // Used only when ty is ND_IDENT
+    char *name;       // Used only when ty is ND_IDENT
 } Node;
 
 typedef struct
@@ -68,7 +68,7 @@ typedef struct
 // container.c
 Node *new_node(int ty, Node *lhs, Node *rhs);
 Node *new_node_num(int val);
-Node *new_node_ident(char name);
+Node *new_node_ident(char *name);
 Token *new_token();
 Vector *new_vector();
 void vec_push(Vector *vec, void *elem);
@@ -100,4 +100,6 @@ void tokenize(char *p, Vector *tokens);
 
 // main.c
 extern int pos;
-extern Node *code[100];
+extern Node *code[100]; // TODO: Make this a vector
+extern size_t num_idents;
+extern Map *idents[100]; // TODO: Make this a vector too
