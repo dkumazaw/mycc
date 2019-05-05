@@ -186,8 +186,9 @@ Node *term(Vector *tokens)
     if (((Token *)tokens->data[pos])->ty == TK_IDENT)
     {
         size_t ident_mem_pos = map_get(idents_to_offsets, ((Token *)tokens->data[pos])->name);
-        if (ident_mem_pos == NULL)
+        if (!ident_mem_pos)
         {
+            // map_get returned NULL; add the variable to the map
             size_t offset = ((num_idents++) + 1) * 8;
         }
         return new_node_ident(((Token *)tokens->data[pos])->name);
