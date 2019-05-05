@@ -2,6 +2,8 @@
 
 int pos = 0;
 Node *code[100];
+size_t num_idents = 0;
+Map *idents;
 
 int expect(int line, int expected, int actual)
 {
@@ -57,6 +59,7 @@ int main(int argc, char **argv)
         return 0;
     }
 
+    idents = new_map();            // Initialize an identifier map
     Vector *tokens = new_vector(); // Initialize a token vector
     // Tokenize input and parse
     tokenize(argv[1], tokens);
