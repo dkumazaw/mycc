@@ -71,10 +71,11 @@ int main(int argc, char **argv)
     printf("main:\n");
 
     // Prolog
-    // Get enough space for 26 variables
+    // Get enough space for the variables
+    size_t bytes_for_variables = num_idents * 8;
     printf("  push rbp\n");
     printf("  mov rbp, rsp\n");
-    printf("  sub rsp, 208\n");
+    printf("  sub rsp, %d\n", bytes_for_variables);
 
     for (int i = 0; code[i]; i++)
     {
