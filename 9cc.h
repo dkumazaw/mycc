@@ -102,4 +102,4 @@ void tokenize(char *p, Vector *tokens);
 extern int pos;
 extern Node *code[100]; // TODO: Make this a vector
 extern size_t num_idents;
-extern Map *idents; // TODO: Make this a vector too
+extern Map *idents_to_offsets; // TODO: Make this a vector too
