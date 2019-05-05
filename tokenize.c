@@ -41,6 +41,21 @@ void tokenize(char *p, Vector *tokens)
             continue;
         }
 
+        if (is_al(*p))
+        {
+            Token *token = new_token();
+            token->ty = TK_IDENT;
+            token->input = p;
+
+            p++;
+            while (is_alnum(*p))
+                p++;
+
+            token->name = strndup(token->input, (size_t)(p - token->input + 1));
+            vec_push(tokens, (void *)token);
+            continue;
+        }
+
         if (strncmp(p, "==", 2) == 0)
         {
             Token *token = new_token();
@@ -85,16 +100,6 @@ void tokenize(char *p, Vector *tokens)
         {
             Token *token = new_token();
             token->ty = *p;
-            token->input = p;
-            vec_push(tokens, (void *)token);
-            p++;
-            continue;
-        }
-
-        if ('a' <= *p && *p <= 'z')
-        {
-            Token *token = new_token();
-            token->ty = TK_IDENT;
             token->input = p;
             vec_push(tokens, (void *)token);
             p++;
