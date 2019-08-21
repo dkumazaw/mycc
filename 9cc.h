@@ -58,6 +58,14 @@ typedef struct
     int len;
 } Vector;
 
+typedef struct
+{
+    LVar *next;
+    char *name;
+    int len;
+    int offset;
+} LVar;
+
 // container.c
 Node *new_node(int ty, Node *lhs, Node *rhs);
 Node *new_node_num(int val);
@@ -90,3 +98,4 @@ void tokenize(char *p, Vector *tokens);
 // main.c
 extern int pos;
 extern Node *code[100];
+extern LVar *locals;
