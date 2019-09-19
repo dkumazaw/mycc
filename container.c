@@ -17,11 +17,11 @@ Node *new_node_num(int val)
     return node;
 }
 
-Node *new_node_ident(char name)
+Node *new_node_ident(int offset)
 {
     Node *node = malloc(sizeof(Node));
     node->ty = ND_IDENT;
-    node->name = name;
+    node->offset = offset;
     return node;
 }
 
@@ -63,4 +63,14 @@ void vec_push(Vector *vec, void *elem)
         vec->data = realloc(vec->data, sizeof(void *) * vec->capacity);
     }
     vec->data[vec->len++] = elem;
+}
+
+LVar *find_lvar(Token *token) {
+    for (LVar *var = locals; var; var = var->next) {
+        if (strncmp(var->name, token->input, var->len) == 0) {
+            // A match was found!
+            return var;
+        }
+    }
+    return NULL;
 }

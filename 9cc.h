@@ -40,6 +40,7 @@ typedef struct
     int ty;      // type of token
     int val;     // if ty is TK_NUM, store its value
     char *input; // token str (for error message)
+    int len;     // Stores the length of the token, used only for TK_IDENT
 } Token;
 
 typedef struct Node
@@ -48,7 +49,7 @@ typedef struct Node
     struct Node *lhs; // lhs
     struct Node *rhs; // rhs
     int val;          // Used only when ty is ND_NUM
-    char name;        // Used only when ty is ND_IDENT
+    int offset;        // Used only when ty is ND_IDENT
 } Node;
 
 typedef struct
@@ -69,10 +70,11 @@ typedef struct
 // container.c
 Node *new_node(int ty, Node *lhs, Node *rhs);
 Node *new_node_num(int val);
-Node *new_node_ident(char name);
+Node *new_node_ident(int offset);
 Token *new_token();
 Vector *new_vector();
 void vec_push(Vector *vec, void *elem);
+LVar *find_lvar(Token *token);
 
 // parse.c
 int consume(Vector *tokens, int ty);

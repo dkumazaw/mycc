@@ -87,8 +87,13 @@ void tokenize(char *p, Vector *tokens)
             Token *token = new_token();
             token->ty = TK_IDENT;
             token->input = p;
+            int length = 1;
+            while ('a' <= *p && *p <= 'z') {
+                length++;
+                p++;
+            }
+            token->len = length;
             vec_push(tokens, (void *)token);
-            p++;
             continue;
         }
 
