@@ -59,13 +59,16 @@ typedef struct
     int len;
 } Vector;
 
-typedef struct
+
+typedef struct LVar LVar;
+
+struct LVar
 {
     LVar *next;
     char *name;
     int len;
     int offset;
-} LVar;
+};
 
 // container.c
 Node *new_node(int ty, Node *lhs, Node *rhs);
