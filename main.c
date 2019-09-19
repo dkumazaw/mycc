@@ -2,6 +2,7 @@
 
 int pos = 0;
 Node *code[100];
+LVar *locals;
 
 int expect(int line, int expected, int actual)
 {
