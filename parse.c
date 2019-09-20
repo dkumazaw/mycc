@@ -36,8 +36,17 @@ Node *assign(Vector *tokens)
 }
 
 /*
-stmt: "return" assign ";"
-stmt: assign ";"
+expr: assign
+*/
+Node *expr(Vector *tokens)
+{
+    Node *node = assign(tokens);
+    return node;
+}
+
+/*
+stmt: "return" expr ";"
+stmt: expr ";"
 */
 Node *stmt(Vector *tokens)
 {
@@ -47,11 +56,11 @@ Node *stmt(Vector *tokens)
     {
         node = malloc(sizeof(Node));
         node->ty = ND_RETURN;
-        node->lhs = assign(tokens);
+        node->lhs = expr(tokens);
     }
     else
     {
-        node = assign(tokens);
+        node = expr(tokens);
     }
 
     if (!consume(tokens, ';'))
