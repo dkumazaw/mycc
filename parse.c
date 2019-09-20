@@ -197,6 +197,7 @@ Node *term(Vector *tokens)
             offset = lvar->offset;
             locals = lvar;
         }
+	pos++;
         return new_node_ident(offset);
     }
 
