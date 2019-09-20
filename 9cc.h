@@ -83,6 +83,7 @@ LVar *find_lvar(Token *token);
 int consume(Vector *tokens, int ty);
 void *program(Vector *tokens);
 Node *assign(Vector *tokens);
+Node *expr(Vector *tokens);
 Node *stmt(Vector *tokens);
 Node *add(Vector *tokens);
 Node *mul(Vector *tokens);
