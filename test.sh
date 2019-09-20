@@ -39,5 +39,6 @@ try 4 "z = 2 * 2; z;"
 try 1 "h = 4 + (1-3); h > 0;"
 try 3 "a = 3; return a; return 4;"
 try 10 "b = 2 * 5; return b;"
+try 5 "hogehoge = 5; return hogehoge;"
 
 echo OK

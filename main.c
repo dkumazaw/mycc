@@ -2,6 +2,7 @@
 
 int pos = 0;
 Node *code[100];
+LVar *locals;
 
 int expect(int line, int expected, int actual)
 {
@@ -42,6 +43,10 @@ int main(int argc, char **argv)
     }
 
     Vector *tokens = new_vector(); // Initialize a token vector
+    LVar *lvar = malloc(sizeof(LVar)); // Initialize locals 
+    lvar->offset = 0;
+    lvar->name = "INIT";
+    locals = lvar;
     // Tokenize input and parse
     tokenize(argv[1], tokens);
     program(tokens);

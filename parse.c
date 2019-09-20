@@ -183,8 +183,23 @@ Node *term(Vector *tokens)
     if (((Token *)tokens->data[pos])->ty == TK_NUM)
         return new_node_num(((Token *)tokens->data[pos++])->val);
 
-    if (((Token *)tokens->data[pos])->ty == TK_IDENT)
-        return new_node_ident(*(((Token *)tokens->data[pos++])->input));
+    if (((Token *)tokens->data[pos])->ty == TK_IDENT) {
+        int offset;
+        LVar *lvar = find_lvar(((Token *)tokens->data[pos]));
+        if (lvar) {
+            offset = lvar->offset;
+        } else {
+            lvar = malloc(sizeof(LVar));
+            lvar->next = locals;
+            lvar->name = ((Token *)tokens->data[pos])->input;
+            lvar->len = ((Token *)tokens->data[pos])->len;
+            lvar->offset = locals->offset + 8;
+            offset = lvar->offset;
+            locals = lvar;
+        }
+	pos++;
+        return new_node_ident(offset);
+    }
 
     fprintf(stderr, "Token is neither an integer or parenthesis: %s", ((Token *)tokens->data[pos])->input);
     exit(1);
