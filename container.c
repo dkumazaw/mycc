@@ -66,6 +66,8 @@ void vec_push(Vector *vec, void *elem)
 }
 
 LVar *find_lvar(Token *token) {
+    if (!locals)
+	return NULL;
     for (LVar *var = locals; var; var = var->next) {
         if (strncmp(var->name, token->input, var->len) == 0) {
             // A match was found!
