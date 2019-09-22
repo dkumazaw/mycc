@@ -46,28 +46,79 @@ Node *expr(Vector *tokens)
 
 /*
 stmt: "return" expr ";"
+stmt: "while" "(" expr ")" stmt
+stmt: "if" "(" expr ")" stmt ("else" stmt)?
 stmt: expr ";"
 */
 Node *stmt(Vector *tokens)
 {
     Node *node;
+    node = malloc(sizeof(Node));
 
     if (consume(tokens, TK_RETURN))
     {
-        node = malloc(sizeof(Node));
         node->ty = ND_RETURN;
         node->lhs = expr(tokens);
+        if (!consume(tokens, ';'))
+        {
+            fprintf(stderr, "Expected ';' but got %s", ((Token *)tokens->data[pos])->input);
+            exit(1);
+        }
+    }
+    else if (consume(tokens, TK_WHILE)) 
+    {    
+        node->ty = ND_WHILE;
+        if (!consume(tokens, '('))
+        {
+            fprintf(stderr, "No opening parenthesis: %s", ((Token *)tokens->data[pos])->input);
+            exit(1);
+        }
+        node->cond = expr(tokens);
+        if (!consume(tokens, ')'))
+        {
+            fprintf(stderr, "No closing parenthesis: %s", ((Token *)tokens->data[pos])->input);
+            exit(1);
+        }
+        node->body = stmt(tokens);
+    }
+    else if (consume(tokens, TK_IF))
+    {
+        node->ty = ND_IF;
+        if (!consume(tokens, '('))
+        {
+            fprintf(stderr, "No opening parenthesis: %s", ((Token *)tokens->data[pos])->input);
+            exit(1);
+        }
+        node->cond = expr(tokens);
+        if (!consume(tokens, ')'))
+        {
+            fprintf(stderr, "No closing parenthesis: %s", ((Token *)tokens->data[pos])->input);
+            exit(1);
+        }
+
+        node->then = stmt(tokens);
+
+        if (consume(tokens, TK_ELSE))
+        {
+            node->els = stmt(tokens);
+        }
+        else
+        {
+            // No else statement found,
+            // set the els to null
+            node->els = NULL;
+        }
     }
     else
     {
         node = expr(tokens);
+        if (!consume(tokens, ';'))
+        {
+            fprintf(stderr, "Expected ';' but got %s", ((Token *)tokens->data[pos])->input);
+            exit(1);
+        }
     }
 
-    if (!consume(tokens, ';'))
-    {
-        fprintf(stderr, "Expected ';' but got %s", ((Token *)tokens->data[pos])->input);
-        exit(1);
-    }
     return node;
 }
 
@@ -206,7 +257,7 @@ Node *term(Vector *tokens)
             offset = lvar->offset;
             locals = lvar;
         }
-	pos++;
+	    pos++;
         return new_node_ident(offset);
     }
 

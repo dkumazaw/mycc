@@ -32,6 +32,46 @@ void tokenize(char *p, Vector *tokens)
             continue;
         }
 
+        if (strncmp(p, "if", 2) == 0 && !is_alnum(p[2])) 
+        {
+            Token *token = new_token();
+            token->ty = TK_IF;
+            token->input = p;
+            vec_push(tokens, (void *)token);
+            p += 2;
+            continue;
+        }
+
+        if (strncmp(p, "else", 4) == 0 && !is_alnum(p[4]))
+        {
+            Token *token = new_token();
+            token->ty = TK_ELSE;
+            token->input = p;
+            vec_push(tokens, (void *)token);
+            p += 4;
+            continue;
+        }
+
+        if (strncmp(p, "while", 5) == 0 && !is_alnum(p[5]))
+        {
+            Token *token = new_token();
+            token->ty = TK_WHILE;
+            token->input = p;
+            vec_push(tokens, (void *)token);
+            p += 5;
+            continue;
+        }
+
+        if (strncmp(p, "for", 3) == 0 && !is_alnum(p[3]))
+        {
+            Token *token = new_token();
+            token->ty = TK_FOR;
+            token->input = p;
+            vec_push(tokens, (void *)token);
+            p += 3;
+            continue;
+        }
+
         if (strncmp(p, "==", 2) == 0)
         {
             Token *token = new_token();
