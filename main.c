@@ -3,6 +3,7 @@
 int pos = 0;
 Node *code[100];
 LVar *locals;
+unsigned int jump_count = 0;
 
 int expect(int line, int expected, int actual)
 {

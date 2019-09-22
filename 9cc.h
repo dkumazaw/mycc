@@ -8,6 +8,10 @@ enum
     TK_NUM = 256, // integer token
     TK_IDENT,     // Identifier
     TK_RETURN,    // return
+    TK_IF,        // if
+    TK_ELSE,      // else
+    TK_WHILE,     // while
+    TK_FOR,       // for
     TK_EQ,        // ==
     TK_NE,        // !=
     TK_LE,        // <=
@@ -20,6 +24,10 @@ enum
     ND_NUM = 256, // integer node type
     ND_IDENT,     // Idenfitifer
     ND_RETURN,    // return
+    ND_IF,        // if
+    ND_ELSE,      // else
+    ND_WHILE,     // while
+    ND_FOR,       // for
     ND_EQ,        // ==
     ND_NE,        // !=
     ND_LE,        // <=
@@ -43,14 +51,23 @@ typedef struct
     int len;     // Stores the length of the token, used only for TK_IDENT
 } Token;
 
-typedef struct Node
+typedef struct Node Node;
+
+struct Node
 {
     int ty;           // type
-    struct Node *lhs; // lhs
-    struct Node *rhs; // rhs
+    Node *lhs; // lhs
+    Node *rhs; // rhs
     int val;          // Used only when ty is ND_NUM
     int offset;        // Used only when ty is ND_IDENT
-} Node;
+
+    // while ('cond') 'body'
+    // if ('cond') 'then' else 'els
+    Node *cond;
+    Node *body;
+    Node *then;
+    Node *els;
+};
 
 typedef struct
 {
@@ -105,3 +122,4 @@ void tokenize(char *p, Vector *tokens);
 extern int pos;
 extern Node *code[100];
 extern LVar *locals;
+extern unsigned int jump_count;

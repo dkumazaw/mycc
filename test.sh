@@ -40,5 +40,11 @@ try 1 "h = 4 + (1-3); h > 0;"
 try 3 "a = 3; return a; return 4;"
 try 10 "b = 2 * 5; return b;"
 try 5 "hogehoge = 5; return hogehoge;"
+try 5 "i = 0; while (i < 5) i = i + 1; return i;"
+try 6 "hoge = 0; while (hoge < 6) hoge = hoge + 1; return hoge;"
+try 5 "i = 10; if (i == 10) return 5; else return 100;"
+try 10 "i = 10;
+if (i <10) return 4;
+else return 10;"
 
 echo OK
