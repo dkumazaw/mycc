@@ -47,5 +47,8 @@ try 10 "i = 10;
 if (i <10) return 4;
 else return 10;"
 try 10 "for (hoge = 0; hoge < 10; hoge = hoge + 1) hoge = hoge + 1; return hoge; "
+try 4 "i = 0; j = 0; while (i < 2) { i = i + 1; j = j + 1; } return i + j;"
+try 14 "i = 10; if (i < 12) { j = 14; return j; } return i;"
+try 10 "i = 10; if (i > 12) { j = 14; return j; } return i;"
 
 echo OK

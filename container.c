@@ -65,6 +65,22 @@ void vec_push(Vector *vec, void *elem)
     vec->data[vec->len++] = elem;
 }
 
+/*
+void* vec_get
+
+Gets an element of the vector at the specified position
+*/
+void *vec_get(Vector *vec, int pos) 
+{
+    // Sanity check
+    if (pos >= vec->len) {
+        printf("Vector index out of range");
+        exit(1);
+    }
+
+    return vec->data[pos];
+}
+
 LVar *find_lvar(Token *token) {
     if (!locals)
 	return NULL;
