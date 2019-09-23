@@ -1,14 +1,37 @@
 #include "9cc.h"
 
 /*
+get_token
+
+A helper function that returns a pointer to the token at the given offset from the current pos.
+Assumes a global variable pos, which indicates the current position of the token.
+*/
+Token *get_token(Vector *tokens, int offset) 
+{
+    return ((Token *)vec_get(tokens, pos + offset));
+}
+
+/*
 consume
 */
 int consume(Vector *tokens, int ty)
 {
-    if (((Token *)tokens->data[pos])->ty != ty)
+    if (get_token(tokens, 0)->ty != ty)
         return 0;
     pos++;
     return 1;
+}
+
+/*
+expect
+*/
+void expect(Vector *tokens, int ty, char* expected)
+{
+    if (!consume(tokens, ty)) 
+    {
+        fprintf(stderr, "Expected %s but got %s", expected, get_token(tokens, 0)->input);
+        exit(1);
+    }
 }
 
 /*
@@ -283,43 +306,58 @@ Node *unary(Vector *tokens)
 
 /*
 term: num
-term: ident
-term: "(" assign ")"
+    | ident ( "(" ")" )?
+    | "(" assign ")"
 */
 Node *term(Vector *tokens)
 {
     if (consume(tokens, '('))
     {
         Node *node = assign(tokens);
-        if (!consume(tokens, ')'))
-        {
-            fprintf(stderr, "No closing parenthesis: %s", ((Token *)tokens->data[pos])->input);
-            exit(1);
-        }
+        expect(tokens, ')', ")");
         return node;
     }
 
     if (((Token *)tokens->data[pos])->ty == TK_NUM)
         return new_node_num(((Token *)tokens->data[pos++])->val);
 
-    if (((Token *)tokens->data[pos])->ty == TK_IDENT) {
-        int offset;
-        LVar *lvar = find_lvar(((Token *)tokens->data[pos]));
-        if (lvar) {
-            offset = lvar->offset;
-        } else {
-            lvar = malloc(sizeof(LVar));
-            lvar->next = locals;
-            lvar->name = ((Token *)tokens->data[pos])->input;
-            lvar->len = ((Token *)tokens->data[pos])->len;
-            lvar->offset = locals->offset + 8;
-            offset = lvar->offset;
-            locals = lvar;
+    if (get_token(tokens, 0)->ty == TK_IDENT) {
+        Token *current_token = get_token(tokens, 0);
+        Token *next_token = get_token(tokens, 1);
+
+        if (next_token->ty == '(') {
+            // Found a function!
+            Node *node = malloc(sizeof(Node));
+            node->ty = ND_CALL;
+            char *function_name = malloc(current_token->len);
+            strncpy(function_name, current_token->input, current_token->len); // Copy name
+            node->fnct_name = function_name;
+            pos++;
+            consume(tokens, '(');
+            expect(tokens, ')', ")");
+            return node;
+        }   
+        else 
+        {     
+            // Found a variable!
+            int offset;
+            LVar *lvar = find_lvar(current_token);
+            if (lvar) {
+                offset = lvar->offset;
+            } else {
+                lvar = malloc(sizeof(LVar));
+                lvar->next = locals;
+                lvar->name = current_token->input;
+                lvar->len = current_token->len;
+                lvar->offset = locals->offset + 8;
+                offset = lvar->offset;
+                locals = lvar;
+            }
+	        pos++;
+            return new_node_ident(offset);
         }
-	    pos++;
-        return new_node_ident(offset);
     }
 
-    fprintf(stderr, "Token is neither an integer or parenthesis: %s", ((Token *)tokens->data[pos])->input);
+    fprintf(stderr, "Token is neither an integer or parenthesis: %s", get_token(tokens, 0)->input);
     exit(1);
 }

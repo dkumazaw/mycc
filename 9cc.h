@@ -23,6 +23,7 @@ enum
 {
     ND_NUM = 256, // integer node type
     ND_IDENT,     // Idenfitifer
+    ND_CALL,      // function call
     ND_RETURN,    // return
     ND_IF,        // if
     ND_ELSE,      // else
@@ -80,6 +81,9 @@ struct Node
 
     // Used when a block needs to store a series of stmts
     Vector* stmts;
+
+    // Used when ty is ND_CALL
+    char *fnct_name;
 };
 
 

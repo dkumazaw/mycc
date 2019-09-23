@@ -43,6 +43,12 @@ void gen(Node *node)
         return;
     }
 
+    if (node->ty == ND_CALL)
+    {
+        printf("  call %s\n", node->fnct_name);
+        return;
+    }
+
     if (node->ty == ND_WHILE) 
     {
         printf(".Lbegin%03d:\n", jump_count);
