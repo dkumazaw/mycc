@@ -48,6 +48,7 @@ Node *expr(Vector *tokens)
 stmt: "return" expr ";"
 stmt: "while" "(" expr ")" stmt
 stmt: "if" "(" expr ")" stmt ("else" stmt)?
+stmt: "for" "(" expr? ";" expr? ";" expr? ")" stmt
 stmt: expr ";"
 */
 Node *stmt(Vector *tokens)
@@ -108,6 +109,51 @@ Node *stmt(Vector *tokens)
             // set the els to null
             node->els = NULL;
         }
+    }
+    else if (consume(tokens, TK_FOR))
+    {
+        node->ty = ND_FOR;
+        if (!consume(tokens, '('))
+        {
+            fprintf(stderr, "No opening parenthesis: %s", ((Token *)tokens->data[pos])->input);
+            exit(1);
+        }
+        // init
+        if (!consume(tokens, ';')) 
+        {
+            node->init = expr(tokens);
+            consume(tokens, ';');
+        }
+        else 
+        {
+            node->init = NULL;
+        }
+
+        // cond
+        if (!consume(tokens, ';'))
+        {
+            node->cond = expr(tokens);
+            consume(tokens, ';');
+        }
+        else 
+        {
+            node->cond = NULL;
+        }
+
+        // then
+        if (!consume(tokens, ';'))
+        {
+            node->then = expr(tokens);
+            consume(tokens, ';');
+        }
+        else 
+        {
+            node->cond = NULL;
+        }
+        consume(tokens, ')');
+
+        // body
+        node->body = stmt(tokens);
     }
     else
     {

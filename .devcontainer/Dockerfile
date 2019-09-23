@@ -33,11 +33,22 @@ RUN apt-get update \
     && apt-get install -y sudo \
     && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME\
     && chmod 0440 /etc/sudoers.d/$USERNAME \
+
+    # For linter
+    && apt-get install -y cppcheck \
+
     #
     # Clean up
     && apt-get autoremove -y \
     && apt-get clean -y \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+
+    # Set up aliases
+    && alias g="git" \
+    && git config --global alias.co checkout \
+    && git config --global alias.br branch \
+    && git config --global alias.ci commit \
+    && git config --global alias.st status
 
 # Switch back to dialog for any ad-hoc use of apt-get
 ENV DEBIAN_FRONTEND=
