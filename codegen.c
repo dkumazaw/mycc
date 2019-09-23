@@ -56,6 +56,22 @@ void gen(Node *node)
         jump_count++;
         return;
     }
+    
+    if (node->ty == ND_FOR)
+    {
+        gen(node->init);
+        printf(".Lbegin%03d:\n", jump_count);
+        gen(node->cond);
+        printf("  pop rax\n");
+        printf("  cmp rax, 0\n");
+        printf("  je .Lend%03d\n", jump_count);
+        gen(node->body);
+        gen(node->then);
+        printf("  jmp .Lbegin%03d\n", jump_count);
+        printf(".Lend%03d:\n", jump_count);
+        jump_count++;
+        return;
+    }
 
     if (node->ty == ND_IF)
     {

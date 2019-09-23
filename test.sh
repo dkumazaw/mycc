@@ -46,5 +46,6 @@ try 5 "i = 10; if (i == 10) return 5; else return 100;"
 try 10 "i = 10;
 if (i <10) return 4;
 else return 10;"
+try 10 "for (hoge = 0; hoge < 10; hoge = hoge + 1) hoge = hoge + 1; return hoge; "
 
 echo OK

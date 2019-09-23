@@ -63,6 +63,8 @@ struct Node
 
     // while ('cond') 'body'
     // if ('cond') 'then' else 'els
+    // for ('init'; 'cond'; 'then') 'body
+    Node *init;
     Node *cond;
     Node *body;
     Node *then;
