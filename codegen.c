@@ -103,6 +103,15 @@ void gen(Node *node)
         }
     }
 
+    if (node->ty == ND_BLOCK)
+    {
+        for (int count = 0; count < node->stmts->len; count++) {
+            gen((Node *)vec_get(node->stmts, count));
+            printf("  pop rax\n");
+        }
+        return;
+    }
+
     if (node->ty == '=')
     {
         gen_lval(node->lhs);

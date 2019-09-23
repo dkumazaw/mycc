@@ -46,10 +46,11 @@ Node *expr(Vector *tokens)
 
 /*
 stmt: "return" expr ";"
-stmt: "while" "(" expr ")" stmt
-stmt: "if" "(" expr ")" stmt ("else" stmt)?
-stmt: "for" "(" expr? ";" expr? ";" expr? ")" stmt
-stmt: expr ";"
+    | "while" "(" expr ")" stmt
+    | "if" "(" expr ")" stmt ("else" stmt)?
+    | "for" "(" expr? ";" expr? ";" expr? ")" stmt
+    | "{" stmt* "}"
+    | expr ";"
 */
 Node *stmt(Vector *tokens)
 {
@@ -154,6 +155,18 @@ Node *stmt(Vector *tokens)
 
         // body
         node->body = stmt(tokens);
+    }
+    else if (consume(tokens, '{')) 
+    {
+        // This is a block!
+        node->ty = ND_BLOCK;
+        // Initialize the vector
+        node->stmts = new_vector();
+
+        while (!consume(tokens, '}')) 
+        {
+            vec_push(node->stmts, (void *)stmt(tokens));
+        }
     }
     else
     {

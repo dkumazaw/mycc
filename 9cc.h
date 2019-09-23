@@ -28,6 +28,7 @@ enum
     ND_ELSE,      // else
     ND_WHILE,     // while
     ND_FOR,       // for
+    ND_BLOCK,     // block
     ND_EQ,        // ==
     ND_NE,        // !=
     ND_LE,        // <=
@@ -51,6 +52,13 @@ typedef struct
     int len;     // Stores the length of the token, used only for TK_IDENT
 } Token;
 
+typedef struct
+{
+    void **data;
+    int capacity;
+    int len;
+} Vector;
+
 typedef struct Node Node;
 
 struct Node
@@ -69,14 +77,10 @@ struct Node
     Node *body;
     Node *then;
     Node *els;
-};
 
-typedef struct
-{
-    void **data;
-    int capacity;
-    int len;
-} Vector;
+    // Used when a block needs to store a series of stmts
+    Vector* stmts;
+};
 
 
 typedef struct LVar LVar;
@@ -89,13 +93,19 @@ struct LVar
     int offset;
 };
 
-// container.c
+/*
+container.c
+*/
 Node *new_node(int ty, Node *lhs, Node *rhs);
 Node *new_node_num(int val);
 Node *new_node_ident(int offset);
 Token *new_token();
+
+// Vector
 Vector *new_vector();
 void vec_push(Vector *vec, void *elem);
+void *vec_get(Vector *vec, int pos);
+
 LVar *find_lvar(Token *token);
 
 // parse.c
