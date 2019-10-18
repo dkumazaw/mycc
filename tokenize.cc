@@ -1,3 +1,4 @@
+#include <vector>
 #include "9cc.h"
 
 int is_alnum(char c)
@@ -11,6 +12,7 @@ int is_alnum(char c)
 /*
 tokenize 
 */
+//void tokenize(char *p, std::vector<Token>& tokens)
 void tokenize(char *p, Vector *tokens)
 {
     while (*p)

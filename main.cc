@@ -1,3 +1,4 @@
+#include <vector>
 #include "9cc.h"
 
 int pos = 0;
@@ -43,6 +44,7 @@ int main(int argc, char **argv)
         return 0;
     }
 
+    std::vector<Token> tokens2;
     Vector *tokens = new_vector(); // Initialize a token vector
     LVar *lvar = malloc(sizeof(LVar)); // Initialize locals 
     lvar->offset = 0;
