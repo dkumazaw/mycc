@@ -47,10 +47,10 @@ char *input: pointer to the start of the token
 */
 typedef struct
 {
-    int ty;      // type of token
-    int val;     // if ty is TK_NUM, store its value
-    char *input; // token str (for error message)
-    int len;     // Stores the length of the token, used only for TK_IDENT
+    int ty = 0;      // type of token
+    int val = 0;     // if ty is TK_NUM, store its value
+    char *input ; // token str (for error message)
+    int len = 0;     // Stores the length of the token, used only for TK_IDENT
 } Token;
 
 typedef struct
