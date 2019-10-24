@@ -2,7 +2,7 @@
 
 Node *new_node(int ty, Node *lhs, Node *rhs)
 {
-    Node *node = malloc(sizeof(Node));
+    Node *node = new Node;
     node->ty = ty;
     node->lhs = lhs;
     node->rhs = rhs;
@@ -11,7 +11,7 @@ Node *new_node(int ty, Node *lhs, Node *rhs)
 
 Node *new_node_num(int val)
 {
-    Node *node = malloc(sizeof(Node));
+    Node *node = new Node;
     node->ty = ND_NUM;
     node->val = val;
     return node;
@@ -19,7 +19,7 @@ Node *new_node_num(int val)
 
 Node *new_node_ident(int offset)
 {
-    Node *node = malloc(sizeof(Node));
+    Node *node = new Node;
     node->ty = ND_IDENT;
     node->offset = offset;
     return node;
@@ -32,7 +32,7 @@ Creates a new token
 */
 Token *new_token()
 {
-    Token *token = malloc(sizeof(Token));
+    Token *token = new Token;
     return token;
 }
 
@@ -43,8 +43,8 @@ Creates a new vector and initializes its capacity to 16.
 */
 Vector *new_vector()
 {
-    Vector *vec = malloc(sizeof(Vector));
-    vec->data = malloc(sizeof(void *) * 16);
+    Vector *vec = (Vector *)malloc(sizeof(Vector));
+    vec->data = (void **)malloc(sizeof(void *) * 16);
     vec->capacity = 16;
     vec->len = 0;
     return vec;
@@ -60,7 +60,7 @@ void vec_push(Vector *vec, void *elem)
     if (vec->capacity == vec->len)
     {
         vec->capacity *= 2;
-        vec->data = realloc(vec->data, sizeof(void *) * vec->capacity);
+        vec->data = (void **)realloc(vec->data, sizeof(void *) * vec->capacity);
     }
     vec->data[vec->len++] = elem;
 }
@@ -81,11 +81,11 @@ void *vec_get(Vector *vec, int pos)
     return vec->data[pos];
 }
 
-LVar *find_lvar(Token *token) {
+LVar *find_lvar() {
     if (!locals)
 	return NULL;
     for (LVar *var = locals; var; var = var->next) {
-        if (strncmp(var->name, token->input, var->len) == 0) {
+        if (strncmp(var->name, (*token_itr).input, var->len) == 0) {
             // A match was found!
             return var;
         }

@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <vector>
+
 enum
 {
     TK_NUM = 256, // integer token
@@ -45,7 +47,7 @@ int ty: TK_NUM if the content is an integer,
 int val: set to the integer value if ty is TK_NUM
 char *input: pointer to the start of the token
 */
-typedef struct
+typedef struct Token
 {
     int ty = 0;      // type of token
     int val = 0;     // if ty is TK_NUM, store its value
@@ -110,20 +112,21 @@ Vector *new_vector();
 void vec_push(Vector *vec, void *elem);
 void *vec_get(Vector *vec, int pos);
 
-LVar *find_lvar(Token *token);
+LVar *find_lvar();
 
 // parse.c
-int consume(Vector *tokens, int ty);
-void *program(Vector *tokens);
-Node *assign(Vector *tokens);
-Node *expr(Vector *tokens);
-Node *stmt(Vector *tokens);
-Node *add(Vector *tokens);
-Node *mul(Vector *tokens);
-Node *unary(Vector *tokens);
-Node *term(Vector *tokens);
-Node *relational(Vector *tokens);
-Node *equality(Vector *tokens);
+bool consume(int ty);
+void program();
+//void *program(Vector *tokens);
+Node *assign();
+Node *expr();
+Node *stmt();
+Node *add();
+Node *mul();
+Node *unary();
+Node *term();
+Node *relational();
+Node *equality();
 void vec_push(Vector *vec, void *elem);
 
 // codegen.c
@@ -132,10 +135,12 @@ void gen(Node *node);
 
 // tokenize.c
 int is_alnum(char c);
-void tokenize(char *p, Vector *tokens);
+void tokenize(char *p, std::vector<Token>& tokens);
 
 // main.c
 extern int pos;
 extern Node *code[100];
 extern LVar *locals;
 extern unsigned int jump_count;
+extern std::vector<Token> tokens;
+extern std::vector<Token>::iterator token_itr;

@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS=-Wall -std=c++11 -g
-SRCS=$(wildcard *.c)
-OBJS=$(SRCS:.c=.o)
+SRCS=$(wildcard *.cc)
+OBJS=$(SRCS:.cc=.o)
 
 9cc: $(OBJS)
 	$(CC) -o 9cc $(OBJS) $(CFLAGS) $(LDFLAGS)

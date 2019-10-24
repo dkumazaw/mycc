@@ -1,19 +1,25 @@
 #include <vector>
 #include "9cc.h"
 
+
+std::vector<Token> tokens;
+std::vector<Token>::iterator token_itr;
+
 int pos = 0;
 Node *code[100];
 LVar *locals;
 unsigned int jump_count = 0;
 
+/*
 int check(int line, int expected, int actual)
 {
     if (expected == actual)
         return 0;
     fprintf(stderr, "%d: %d expected, but got %d\n", line, expected, actual);
     exit(1);
-}
+}*/
 
+/*
 void runtest()
 {
     Vector *vec = new_vector();
@@ -28,7 +34,7 @@ void runtest()
     check(__LINE__, 99, (int)vec->data[99]);
 
     printf("OK\n");
-}
+}*/
 
 int main(int argc, char **argv)
 {
@@ -38,21 +44,23 @@ int main(int argc, char **argv)
         return 1;
     }
 
+    /*
     if (strcmp(argv[1], "-test") == 0)
     {
         runtest();
         return 0;
-    }
+    }*/
 
     std::vector<Token> tokens;
     //Vector *tokens = new_vector(); // Initialize a token vector
-    LVar *lvar = malloc(sizeof(LVar)); // Initialize locals 
+    LVar *lvar = new LVar; // Initialize locals 
     lvar->offset = 0;
     lvar->name = "INIT";
     locals = lvar;
     // Tokenize input and parse
     tokenize(argv[1], tokens);
-    program(tokens);
+    program();
+    //program(tokens);
 
     // Output the first part of assembly
     printf(".intel_syntax noprefix\n");
