@@ -51,5 +51,6 @@ try 4 "i = 0; j = 0; while (i < 2) { i = i + 1; j = j + 1; } return i + j;"
 try 14 "i = 10; if (i < 12) { j = 14; return j; } return i;"
 try 10 "i = 10; if (i > 12) { j = 14; return j; } return i;"
 try 1 "i = 1; foo(); return i;"
+try 1 "i = 1; foo2(1, 4); return i;"
 
 echo OK

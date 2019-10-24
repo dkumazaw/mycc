@@ -38,7 +38,7 @@ void expect(Vector *tokens, int ty, char* expected)
 program: stmt program
 program: epsion
 */
-void *program(Vector *tokens)
+void program(Vector *tokens)
 {
     int i = 0;
     while (((Token *)tokens->data[pos])->ty != TK_EOF)
@@ -334,12 +334,29 @@ Node *term(Vector *tokens)
             node->fnct_name = function_name;
             pos++;
             consume(tokens, '(');
-            if (consume(tokens, TK_NUM)) 
-            for (int count = 0; count < 6; count++) {
-                
+            
+            Token *arg_token = get_token(tokens, 0);
+            if (arg_token->ty == ')') {
+                node->fnct_num_args = 0;
+                consume(tokens, ')');
+                return node;
             }
-            expect(tokens, ')', ")");
-            return node;
+            else {
+                int count = 0;
+                for (; count < 6; count++) {
+                    Token *current_token = get_token(tokens, 0);
+                    if (current_token->ty != TK_NUM) {
+                        fprintf(stderr, "WRONG INPUT!");
+                        exit(1);
+                    }
+                    node->fnct_args[count] = current_token->val;
+                    pos++;
+                    if (!consume(tokens, ',')) break;
+                }
+                node->fnct_num_args = count + 1;
+                expect(tokens, ')', ")");
+                return node;
+            }
         }   
         else 
         {     

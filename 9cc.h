@@ -87,6 +87,9 @@ struct Node
 
     // Arguments of fnct
     int fnct_args[6];
+
+    // Number of arguments for a function call. min 0, max 6.
+    int fnct_num_args;
 };
 
 
@@ -117,7 +120,7 @@ LVar *find_lvar(Token *token);
 
 // parse.c
 int consume(Vector *tokens, int ty);
-void *program(Vector *tokens);
+void program(Vector *tokens);
 Node *assign(Vector *tokens);
 Node *expr(Vector *tokens);
 Node *stmt(Vector *tokens);
