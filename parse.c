@@ -334,6 +334,10 @@ Node *term(Vector *tokens)
             node->fnct_name = function_name;
             pos++;
             consume(tokens, '(');
+            if (consume(tokens, TK_NUM)) 
+            for (int count = 0; count < 6; count++) {
+                
+            }
             expect(tokens, ')', ")");
             return node;
         }   

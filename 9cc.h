@@ -84,6 +84,9 @@ struct Node
 
     // Used when ty is ND_CALL
     char *fnct_name;
+
+    // Arguments of fnct
+    int fnct_args[6];
 };
 
 
